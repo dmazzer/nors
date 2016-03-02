@@ -65,7 +65,7 @@ class Nors_GenericSensor:
         else:
             sensor_id = gs_id
         self.sensor_properties = {'name': gs_name,
-                                  'id': sensor_id,
+                                  'sensor_id': sensor_id,
                                   'type': gs_type,
                                   'pull_interval': gs_pull_interval,
                                   'read_fisical_interval': gs_read_fisical_interval

@@ -49,6 +49,18 @@ class Nors_SensorService:
         t_catalog.start()
         
     def SensorPullingWork(self, q):
+        '''
+        SensorPullingWork - Consult sensors to get sensor data
+        
+        Note: With this implementation, all sensors are inquired, one by one, by the same thread.
+        The ZMQ sockets are created as needed.
+        Another architecture option may spawn one thread per sensor, so each thread may inquire the 
+        sensor in independent time intervals. With independe threads may be more simple to 
+        identify non responding sensors.
+        
+        Note 2: Feature missing: The platform may be more flexible if it allows the ZMQ socket 
+        to be other than only IPC, i.e.: TCP. 
+        '''
         while True:
             for sensor in self.sensor_catalog_list:
                 logger.log('Pulling :' + sensor['name'] + ' ' + sensor['sensor_id'])
@@ -68,15 +80,11 @@ class Nors_SensorService:
             
                 if poller.poll(10*1000): # 10s timeout in milliseconds
                     result = socket.recv_json()
+                    # TODO: Send data to database or cloud service. Needs design!!
                 else:
                     logger.log('Timeout processing auth request' + sensor['name'] + ' ' + sensor['sensor_id'])
-            
-               
-                
             time.sleep(5)
         
-        
-
     def SensorCatalogWork(self, q):
         # ZeroMQ Context
         context = zmq.Context()
@@ -87,21 +95,25 @@ class Nors_SensorService:
         
         while True:
             message = json.loads(socket.recv_json())
-            if self.SensorCatalogRegisterCheckID(message['name'], message['id']):
-                logger.log('Registering ' + message['name'] + ' - '  + message['id'])
-                self.ipc_sensor_pulling = "ipc:///tmp/" + message['id'] + ".pipe"
+            if self.SensorCatalogRegisterCheckID(message):
+                self.ipc_sensor_pulling = "ipc:///tmp/" + message['sensor_id'] + ".pipe"
                 socket.send_json({"result":"registered"})
             else:
-                socket.send_json({"result":"registered"})
+                socket.send_json({"result":"denied"})
     
-    def SensorCatalogRegisterCheckID(self, sensor_name, sensor_id):
+    def SensorCatalogRegisterCheckID(self, message):
+        
         # in future, the ID may be checked to prevent duplicated sensors and dead sensors to be pulled.
+        
+        sensor_id = message['sensor_id']
+        sensor_name = message['name']
         
         if sensor_id == '':
             return False
         else:
-            sensor_append = {'name': sensor_name, 'sensor_id': sensor_id} 
-            self.sensor_catalog_list.append(sensor_append)
+            logger.log('Registering ' + sensor_name + ' - '  + sensor_id)
+#             sensor_append = {'name': sensor_name, 'sensor_id': sensor_id} 
+            self.sensor_catalog_list.append(message)
             return True
 
 if __name__ == '__main__':
