@@ -30,7 +30,7 @@ class Nors_GenericSensorStorage:
     '''
     
     def __init__(self):
-        self.sensor_data_storage = ''
+        self.sensor_data_storage = {}
     
     @classmethod
     def put(cls, sensor_data):
@@ -54,6 +54,7 @@ class Nors_GenericSensor:
         logger.log('GenericSensor started')
         
         self.q = Queue.Queue()
+        Nors_GenericSensorStorage.put({})
         
         if gs_id == '':
             sensor_id = str(uuid1())
