@@ -73,13 +73,15 @@ class Nors_SensorService:
                 poller = zmq.Poller()
                 poller.register(socket, zmq.POLLIN)
 
+                logger.log('Sensor data requesting...')
                 socket.send_json({"query":"sensor_data"})
-            
-                if poller.poll(10*1000): # 10s timeout in milliseconds
+                logger.log('Sensor data requested.')
+
+                if poller.poll(15*1000): # 15s timeout in milliseconds
                     result = socket.recv_json()
                     # TODO: Send data to database or cloud service. Needs design!!
                 else:
-                    logger.log('Timeout processing auth request' + sensor['name'] + ' ' + sensor['sensor_id'])
+                    logger.log('Timeout sensor data request ' + sensor['name'] + ' ' + sensor['sensor_id'])
             time.sleep(5)
         
     def SensorCatalogWork(self, q):

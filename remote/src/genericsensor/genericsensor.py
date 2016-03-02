@@ -90,6 +90,10 @@ class Nors_GenericSensor:
         return random.uniform(-1,1)
     
     def SignIn(self):
+        '''
+        SignIn - Register a sensor in SensorService
+        '''
+        
         logger.log('Registering sensor: ' + self.sensor_properties['name'])
         
         # ZeroMQ Context
@@ -125,6 +129,10 @@ class Nors_GenericSensor:
         tt.start()
                 
     def SensorWork(self, q):
+        '''
+        SensorWork - Read a fisical sensor, call data processing and send data to storage
+        '''
+        
         while True:
             time.sleep(self.sensor_properties['read_fisical_interval'])
             sensor_data = self.SensorRead()
@@ -132,12 +140,16 @@ class Nors_GenericSensor:
             Nors_GenericSensorStorage.put(sensor_data_processed)
             
     def SensorPullWork(self, q):
+        '''
+        SensorPullWork - Transmits sensor data to SensorService when queryed (listener)
+        '''
+        
         # ZeroMQ Context
         context = zmq.Context()
         
         # Define the socket using the "Context"
         socket = context.socket(zmq.REP)
-        socket.setsockopt(zmq.LINGER, 0)
+#         socket.setsockopt(zmq.LINGER, 0)
         socket.bind(self.ipc_sensor_pulling)
         
         while True:

@@ -16,17 +16,46 @@ import sys
 import signal
 
 sys.path.append('../')
-from sensorservice.sensorservice import Nors_SensorService
 from genericsensor.genericsensor import Nors_GenericSensor
 
 from grovepi import *
 
+def SensorRead():
+    dht_sensor_port = 2        # Connect the DHt sensor to port 7
+
+    try:
+        [ temp,hum ] = dht(dht_sensor_port,0)        #Get the temperature and Humidity from the DHT sensor
+        t = str(temp)
+        h = str(hum)
+        logger.log( "Temp = " + t + "  Humidity = " + h + "%")     
+        return {'temp': t, 'hum': h}
+    except (IOError,TypeError) as e:
+        logger.log("Error")
+
+def SensorDataProcessing(sensor_data):
+    return sensor_data
+    
+
+from norsutils.logmsgs.logger import Logger
+
+logger = Logger()
+logger.log("NORS - Noticia Remote Management and Supervisor")
+logger.log("SENSOR - DHT Humidity and Temperature")
+
+sensor = Nors_GenericSensor('DHT', '1e693dee-e0b6-11e5-8f44-001dbaefa596',
+                                 'Special', 5, 4, SensorRead, SensorDataProcessing)
+sensor.SignIn()
 
 if __name__ == '__main__':
-    
-    from norsutils.logmsgs.logger import Logger
+    print SensorRead()
 
-    logger = Logger()
-    logger.log("NORS - Noticia Remote Management and Supervisor")
-    logger.log("SENSOR - DHT Humidity and Temperature")
+
+def do_exit(sig, stack):
+    raise SystemExit('Exiting')
+
+signal.signal(signal.SIGINT, do_exit)
+signal.signal(signal.SIGUSR1, do_exit)
+
+signal.pause()    
+
     
