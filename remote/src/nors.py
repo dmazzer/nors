@@ -28,7 +28,7 @@ if __name__ == '__main__':
     sensor_generic = Nors_GenericSensor()
     sensor_generic.SignIn()
     
-    sensor_dht()
+    sensor_dht = sensor_dht.RealSensor()
 
     
     def do_exit(sig, stack):
