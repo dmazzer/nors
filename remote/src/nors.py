@@ -30,7 +30,7 @@ if __name__ == '__main__':
     sensor_generic2 = Nors_GenericSensor(gs_name='fake2', gs_pull_interval=2, gs_read_fisical_interval=1)
     sensor_generic2.SignIn()
     
-#     sensor_dht()
+    sensor_dht = sensor_dht.RealSensor()
 
     
     def do_exit(sig, stack):
