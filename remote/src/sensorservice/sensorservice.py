@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 """ 
-sensors.py: Sensors controllers and readers 
+sensorservice.py: Sensors controllers and readers 
 
 """
 
@@ -9,10 +9,8 @@ __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
 __credits__ = ""
 __license__ = "GPL"
-__version__ = "0.1.0"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
-__status__ = "Development"
 
 import zmq
 import sys
@@ -22,7 +20,6 @@ import time
 from uuid import uuid1
 import json
 import signal
-import os
 
 class Nors_SensorService:
     def __init__(self):
@@ -50,20 +47,20 @@ class Nors_SensorService:
         
     def SensorPullingWork(self, q):
         '''
-        SensorPullingWork - Consult sensors to get sensor data
+        SensorPullingWork - Consult sensorservice to get sensor data
         
-        Note: With this implementation, all sensors are inquired, one by one, by the same thread.
+        Note: With this implementation, all sensorservice are inquired, one by one, by the same thread.
         The ZMQ sockets are created as needed.
         Another architecture option may spawn one thread per sensor, so each thread may inquire the 
         sensor in independent time intervals. With independe threads may be more simple to 
-        identify non responding sensors.
+        identify non responding sensorservice.
         
         Note 2: Feature missing: The platform may be more flexible if it allows the ZMQ socket 
         to be other than only IPC, i.e.: TCP. 
         '''
         while True:
             for sensor in self.sensor_catalog_list:
-                logger.log('Pulling :' + sensor['name'] + ' ' + sensor['sensor_id'])
+                logger.log('Pulling: ' + sensor['name'] + ' ' + sensor['sensor_id'])
             
                 # ZeroMQ Context
                 context = zmq.Context()
@@ -103,7 +100,7 @@ class Nors_SensorService:
     
     def SensorCatalogRegisterCheckID(self, message):
         
-        # in future, the ID may be checked to prevent duplicated sensors and dead sensors to be pulled.
+        # in future, the ID may be checked to prevent duplicated sensorservice and dead sensorservice to be pulled.
         
         sensor_id = message['sensor_id']
         sensor_name = message['name']
@@ -131,4 +128,11 @@ if __name__ == '__main__':
     signal.signal(signal.SIGUSR1, do_exit)
     
     signal.pause()    
+
+else:
+    sys.path.append('../')
+    from norsutils.logmsgs.logger import Logger
+    logger = Logger()
+
+
 

@@ -4,18 +4,13 @@
 genericsensor.py: Generic Sensor representation and registration application
 
 """
-import math
-import random
-from _random import Random
 
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
 __credits__ = ""
 __license__ = "GPL"
-__version__ = "0.1.0"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
-__status__ = "Development"
 
 import zmq
 import sys
@@ -25,7 +20,7 @@ import time
 from uuid import uuid1
 import json
 import signal
-import os
+import random
 
 
 class Nors_GenericSensorStorage:
@@ -147,7 +142,6 @@ class Nors_GenericSensor:
         
         while True:
             msg = socket.recv_json()
-            logger.log(msg)
             if msg['query'] == 'sensor_data':
                 sensor_data = {'sensor_data': Nors_GenericSensorStorage.get()}
                 socket.send_json(json.dumps(sensor_data))
@@ -160,16 +154,18 @@ if __name__ == '__main__':
     logger.log("GenericSensor started by command line")
     sensor = Nors_GenericSensor()
     sensor.SignIn()
+
+    def do_exit(sig, stack):
+        raise SystemExit('Exiting')
+    
+    signal.signal(signal.SIGINT, do_exit)
+    signal.signal(signal.SIGUSR1, do_exit)
+    
+    signal.pause()    
     
 else:
+    sys.path.append('../')
     from norsutils.logmsgs.logger import Logger
     logger = Logger()
 
-def do_exit(sig, stack):
-    raise SystemExit('Exiting')
-
-signal.signal(signal.SIGINT, do_exit)
-signal.signal(signal.SIGUSR1, do_exit)
-
-signal.pause()    
     
