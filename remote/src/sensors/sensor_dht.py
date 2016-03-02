@@ -50,7 +50,8 @@ logger.log("NORS - Noticia Remote Management and Supervisor")
 logger.log("SENSOR - DHT Humidity and Temperature")
 
 if __name__ == '__main__':
-    print RealSensor.SensorRead()
+    sensor = RealSensor()
+    print sensor.SensorRead()
 
 
 def do_exit(sig, stack):
