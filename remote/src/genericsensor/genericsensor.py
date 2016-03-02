@@ -32,13 +32,11 @@ class Nors_GenericSensorStorage:
     def __init__(self):
         self.sensor_data_storage = {}
     
-    @classmethod
-    def put(cls, sensor_data):
-        cls.sensor_data_storage = sensor_data
+    def put(self, sensor_data):
+        self.sensor_data_storage = sensor_data
     
-    @classmethod
-    def get(cls):
-        return cls.sensor_data_storage
+    def get(self):
+        return self.sensor_data_storage
 
 class Nors_GenericSensor:
     '''
@@ -54,7 +52,7 @@ class Nors_GenericSensor:
         logger.log('GenericSensor started')
         
         self.q = Queue.Queue()
-        Nors_GenericSensorStorage.put({})
+        self.SensorDataStorage = Nors_GenericSensorStorage()
         
         if gs_id == '':
             sensor_id = str(uuid1())
@@ -138,7 +136,7 @@ class Nors_GenericSensor:
             time.sleep(self.sensor_properties['read_fisical_interval'])
             sensor_data = self.SensorRead()
             sensor_data_processed = self.SensorDataProcessing(sensor_data)
-            Nors_GenericSensorStorage.put(sensor_data_processed)
+            self.SensorDataStorage.put(sensor_data_processed)
             
     def SensorPullWork(self, q):
         '''
@@ -156,7 +154,7 @@ class Nors_GenericSensor:
         while True:
             msg = socket.recv_json()
             if msg['query'] == 'sensor_data':
-                sensor_data = {'sensor_data': Nors_GenericSensorStorage.get()}
+                sensor_data = {'sensor_data': self.SensorDataStorage.get()}
                 socket.send_json(json.dumps(sensor_data))
 
 if __name__ == '__main__':

@@ -84,6 +84,8 @@ class Nors_SensorService:
                     # TODO: Send data to database or cloud service. Needs design!!
                 else:
                     logger.log('Timeout sensor data request ' + sensor['name'] + ' ' + sensor['sensor_id'])
+                time.sleep(1)
+
             time.sleep(5)
         
     def SensorCatalogWork(self, q):

@@ -54,12 +54,12 @@ if __name__ == '__main__':
     print sensor.SensorRead()
 
 
-def do_exit(sig, stack):
-    raise SystemExit('Exiting')
-
-signal.signal(signal.SIGINT, do_exit)
-signal.signal(signal.SIGUSR1, do_exit)
-
-signal.pause()    
+    def do_exit(sig, stack):
+        raise SystemExit('Exiting')
+    
+    signal.signal(signal.SIGINT, do_exit)
+    signal.signal(signal.SIGUSR1, do_exit)
+    
+    signal.pause()    
 
     

@@ -16,7 +16,7 @@ __email__ = "dmazzer@gmail.com"
 import signal
 from sensorservice.sensorservice import Nors_SensorService
 from genericsensor.genericsensor import Nors_GenericSensor
-from sensors import sensor_dht
+# from sensors import sensor_dht
 
 if __name__ == '__main__':
     
@@ -25,10 +25,12 @@ if __name__ == '__main__':
     logger = Logger()
     logger.log("NORS - Noticia Remote Management and Supervisor")
     sensor_service = Nors_SensorService()
-    sensor_generic = Nors_GenericSensor()
-    sensor_generic.SignIn()
+    sensor_generic1 = Nors_GenericSensor(gs_name='fake1', gs_pull_interval=2, gs_read_fisical_interval=1)
+    sensor_generic1.SignIn()
+    sensor_generic2 = Nors_GenericSensor(gs_name='fake2', gs_pull_interval=2, gs_read_fisical_interval=1)
+    sensor_generic2.SignIn()
     
-    sensor_dht()
+#     sensor_dht()
 
     
     def do_exit(sig, stack):
