@@ -1,10 +1,10 @@
 #!/usr/bin/env python2
 
 """ 
-sensor_dht.py: DHT11 Temperature and Humidity sensor driver
+sensor_bmp180.py: BMP180 Barometer Sensor
 
 Sensror Info:
-http://www.seeedstudio.com/wiki/Grove_-_Temperature_and_Humidity_Sensor
+http://www.seeedstudio.com/wiki/Grove_-_Barometer_Sensor_(BMP180)
 """
 
 __author__ = "Daniel Mazzer"
