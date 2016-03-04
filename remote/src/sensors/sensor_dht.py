@@ -53,8 +53,6 @@ logger.log("SENSOR - DHT Humidity and Temperature")
 
 if __name__ == '__main__':
     sensor = RealSensor()
-    print sensor.SensorRead()
-
 
     def do_exit(sig, stack):
         raise SystemExit('Exiting')
