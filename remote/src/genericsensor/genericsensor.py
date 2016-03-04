@@ -4,6 +4,7 @@
 genericsensor.py: Generic Sensor representation and registration application
 
 """
+import datetime
 
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
@@ -155,7 +156,16 @@ class Nors_GenericSensor:
             msg = socket.recv_json()
             if msg['query'] == 'sensor_data':
                 sensor_data = {'sensor_data': self.SensorDataStorage.get()}
-                socket.send_json(json.dumps(sensor_data))
+                socket.send_json(json.dumps(self.SensorDataInformation(sensor_data)))
+
+    def SensorDataInformation(self, sensor_data):
+        sensor_data['date'] = self.getDateTime()
+        sensor_data['sensor_id'] = self.sensor_properties['sensor_id']
+        return sensor_data 
+
+    def getDateTime(self):
+        return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    
 
 if __name__ == '__main__':
     
