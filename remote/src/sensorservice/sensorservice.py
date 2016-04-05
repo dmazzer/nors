@@ -52,7 +52,7 @@ class Nors_SensorService:
         Note: With this implementation, all sensorservice are inquired, one by one, by the same thread.
         The ZMQ sockets are created as needed.
         Another architecture option may spawn one thread per sensor, so each thread may inquire the 
-        sensor in independent time intervals. With independe threads may be more simple to 
+        sensor in independent time intervals. With independent threads may be more simple to 
         identify non responding sensorservice.
         
         Note 2: Feature missing: The platform may be more flexible if it allows the ZMQ socket 
