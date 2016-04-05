@@ -19,7 +19,7 @@ import signal
 # from genericsensor.genericsensor import Nors_GenericSensor
 
 class Nors_LocalStorage():
-    def __init__(self, db='nors_localstorage', db_address='mongodb://localhost:27017/'):
+    def __init__(self):
         '''
         UserDAO Constructor
         Receives the db (unique for all Cell Controllers), collection (one for each Cell Controller) and db_address

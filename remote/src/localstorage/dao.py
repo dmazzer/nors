@@ -2,6 +2,7 @@
 dao.py: MongoDB DAO
 
 """
+import pymongo
 
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
@@ -16,29 +17,24 @@ import sys
 import json
 
 class Nors_LocalStorage_DAO:
-    '''
-    Class for data abstraction layer to MongoDB
-    
-    Methods update, findDocument needs rewrite and code that uses it must be rewrited too
-    '''
-    def __init__(self, db, db_address='mongodb://localhost:27017/'):
-        '''
-        UserDAO Constructor
-        Receives the db (unique for all Cell Controllers), collection (one for each Cell Controller) and db_address
-        '''
+    def __init__(self, db='nors_localstorage', db_address='mongodb://localhost:27017/'):
         
-        self.logger = Logger()
+        logger.log('connecting to LOCAL database ' + db + ' at ' + db_address)
+        self.db = self.connect(db, db_address)
+        logger.log('done connecting to database')
 
-        self.logger.log('connecting to database ' + db + ' at ' + db_address)
-
-        client = MongoClient(db_address)
-        self.db = client[str(db)]
+    def connect(self, db, db_address):
+        try:
+            client = MongoClient(db_address)
+            return client[str(db)]
+        except pymongo.errors.ConnectionFailure:
+            logger.log('Could not connect to sever ' + db_address)
+            raise
         
-        self.logger.log('done connecting to database')
-
+        
     def insert(self, CollectionName, jsonstring):
         collection = self.db[str(CollectionName)]
-        post_id = collection.insert_one(jsonstring).inserted_id
+        post_id = collection.insert(jsonstring)
         return post_id
 
     def update(self, CollectionName, SearchKey, SearchValue, FieldsJson):
@@ -95,5 +91,9 @@ class Nors_LocalStorage_DAO:
         collection = self.db[str(CollectionName)]
         collection.drop()
         
-         
+
+sys.path.append('../')
+from norsutils.logmsgs.logger import Logger
+logger = Logger()
+   
          

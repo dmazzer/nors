@@ -4,7 +4,6 @@
 genericsensor.py: Generic Sensor representation and registration application
 
 """
-import datetime
 
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
@@ -13,6 +12,7 @@ __license__ = "GPL"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
+import datetime
 import zmq
 import sys
 from threading import Thread
