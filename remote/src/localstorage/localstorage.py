@@ -22,7 +22,7 @@ class Nors_LocalStorage():
     def __init__(self):
         '''
         UserDAO Constructor
-        Receives the db (unique for all Cell Controllers), collection (one for each Cell Controller) and db_address
+        Receives the db_client (unique for all Cell Controllers), collection (one for each Cell Controller) and db_address
         '''
         
         self.logger = Logger()
@@ -30,12 +30,12 @@ class Nors_LocalStorage():
         self.logger.log('connecting to database ' + db + ' at ' + db_address)
 
         client = MongoClient(db_address)
-        self.db = client[str(db)]
+        self.db_client = client[str(db)]
         
         self.logger.log('done connecting to database')
 
     def insert(self, CollectionName, jsonstring):
-        collection = self.db[str(CollectionName)]
+        collection = self.db_client[str(CollectionName)]
         post_id = collection.insert_one(jsonstring).inserted_id
         return post_id
     

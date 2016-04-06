@@ -20,43 +20,23 @@ class Nors_LocalStorage_DAO:
     def __init__(self, db='nors_localstorage', db_address='mongodb://localhost:27017/'):
         
         logger.log('connecting to LOCAL database ' + db + ' at ' + db_address)
-        self.db = self.connect(db, db_address)
-        logger.log('done connecting to database')
-
-    def connect(self, db, db_address):
         try:
-            client = MongoClient(db_address)
-            return client[str(db)]
+            self.db_connection = MongoClient(db_address)
+            self.db_client =  self.db_connection[str(db)]
+            self.db_name = db
         except pymongo.errors.ConnectionFailure:
             logger.log('Could not connect to sever ' + db_address)
             raise
-        
-        
+
+        logger.log('done connecting to database')
+
     def insert(self, CollectionName, jsonstring):
-        collection = self.db[str(CollectionName)]
+        collection = self.db_client[str(CollectionName)]
         post_id = collection.insert(jsonstring)
         return post_id
 
-    def update(self, CollectionName, SearchKey, SearchValue, FieldsJson):
-        collection = self.db[str(CollectionName)]
-        searchd = {SearchKey: SearchValue }
-#         print searchd
-#         print FieldsJson
-#         print json.dumps(FieldsJson)
-#         searchjson = ( searchd , { '$set': json.dumps(FieldsJson) } )
-#         print searchjson
-#         post_id = collection.update_one(searchd, '{ "$set": json.dumps(FieldsJson) }')
-        post_id = collection.update_one(searchd, { "$set": FieldsJson})
-        return post_id
-
-    def update2(self, CollectionName, SearchDict, FieldsJson):
-        collection = self.db[str(CollectionName)]
-#         print searchd
-#         print FieldsJson
-#         print json.dumps(FieldsJson)
-#         searchjson = ( searchd , { '$set': json.dumps(FieldsJson) } )
-#         print searchjson
-#         post_id = collection.update_one(searchd, '{ "$set": json.dumps(FieldsJson) }')
+    def update(self, CollectionName, SearchDict, FieldsJson):
+        collection = self.db_client[str(CollectionName)]
         post_id = collection.update_one(SearchDict, { "$set": FieldsJson})
         return post_id
     
@@ -68,18 +48,7 @@ class Nors_LocalStorage_DAO:
         return self.findDocument(CollectionName, searchd, numberOfItems)
         
     def findDocument(self, CollectionName, SearchString, SearchLimit=None):
-        collection = self.db[str(CollectionName)]
-        if SearchLimit is not None:
-            collected = collection.find(SearchString).limit(SearchLimit)
-        else:
-            collected = collection.find(SearchString)
-        collectedlist = []
-        for data in collected:
-            collectedlist.append(data)
-        return collectedlist
-
-    def findDocument2(self, CollectionName, SearchString, SearchLimit=None):
-        collection = self.db[str(CollectionName)]
+        collection = self.db_client[str(CollectionName)]
         if SearchLimit is not None:
             collected = collection.find(SearchString).limit(SearchLimit)
         else:
@@ -88,8 +57,11 @@ class Nors_LocalStorage_DAO:
 
     
     def dropCollection(self, CollectionName):
-        collection = self.db[str(CollectionName)]
+        collection = self.db_client[str(CollectionName)]
         collection.drop()
+        
+    def dropDB(self):
+        database = self.db_connection.drop_database(self.db_name)
         
 
 sys.path.append('../')
