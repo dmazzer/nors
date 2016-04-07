@@ -40,14 +40,14 @@ class Nors_LocalStorage_DAO:
         post_id = collection.update_one(SearchDict, { "$set": FieldsJson})
         return post_id
     
-    def getDateInRange(self, CollectionName, startDate, numberOfItems):
+    def get_itens_from_date(self, CollectionName, startDate, numberOfItems):
         '''
         Returns numberOfItems items from the database, if available data is less than numberOfItems, no data is returned. 
         '''
         searchd = {"date": {"$gt":str(startDate)}}
-        return self.findDocument(CollectionName, searchd, numberOfItems)
+        return self.find(CollectionName, searchd, numberOfItems)
         
-    def findDocument(self, CollectionName, SearchString, SearchLimit=None):
+    def find(self, CollectionName, SearchString, SearchLimit=None):
         collection = self.db_client[str(CollectionName)]
         if SearchLimit is not None:
             collected = collection.find(SearchString).limit(SearchLimit)

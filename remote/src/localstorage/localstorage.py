@@ -18,36 +18,41 @@ import signal
 # sys.path.append('../')
 # from genericsensor.genericsensor import Nors_GenericSensor
 
+from norsutils.logmsgs.logger import Logger
+from localstorage.dao import Nors_LocalStorage_DAO
+
+logger = Logger()
+
+
 class Nors_LocalStorage():
     def __init__(self):
-        '''
-        UserDAO Constructor
-        Receives the db_client (unique for all Cell Controllers), collection (one for each Cell Controller) and db_address
-        '''
+
+        self.local_db_collection_name = 'nors_local_storage'
         
-        self.logger = Logger()
+        # TODO: self.max_db_entries is the max number of entries in DB, if exceeds 
+        # new data is droped. The values 0 disable the entries limitation.
+        self.max_db_entries = 10000
 
-        self.logger.log('connecting to database ' + db + ' at ' + db_address)
-
-        client = MongoClient(db_address)
-        self.db_client = client[str(db)]
+        # TODO: self.db_entries_ttl may be used to define the time to live
+        # of each new entry, leaving to MongoDB automatically delete
+        # documents after the time in seconds specified. This feature is
+        # not yet implemented on DAO.    
+        self.db_entries_ttl = 1 * (60 * 24)
         
-        self.logger.log('done connecting to database')
+        self.local_dao = Nors_LocalStorage_DAO(db=self.local_db_collection_name)
 
-    def insert(self, CollectionName, jsonstring):
-        collection = self.db_client[str(CollectionName)]
-        post_id = collection.insert_one(jsonstring).inserted_id
-        return post_id
+    def store(self, data_to_insert):
+        self.local_dao.insert(self.local_db_collection_name, data_to_insert) 
     
-    def insert(self):
-        pass 
-    
-    def remove(self):
+    def __transfer_to_external_db(self):
         pass
     
-    def count(self):
+    def __prepare_data_to_transfer(self):
         pass
     
+    def __remove(self):
+        pass
+        
     
         
     

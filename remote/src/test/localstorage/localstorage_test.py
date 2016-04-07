@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-
 """ 
 localstorage_test.py: LocalStorage test class
 
@@ -13,7 +11,6 @@ __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
 import sys
-import signal
 
 sys.path.append('../')
 from localstorage.localstorage import Nors_LocalStorage
