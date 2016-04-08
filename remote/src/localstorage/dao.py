@@ -2,7 +2,6 @@
 dao.py: MongoDB DAO
 
 """
-import pymongo
 
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
@@ -11,13 +10,19 @@ __license__ = "MIT"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
-from pymongo import MongoClient
 
 import sys
-import json
+
+sys.path.append('../')
+from norsutils.logmsgs.logger import Logger
+
+from pymongo import MongoClient
+import pymongo
+
+logger = Logger()
 
 class Nors_LocalStorage_DAO:
-    def __init__(self, db='nors_localstorage', db_address='mongodb://localhost:27017/'):
+    def __init__(self, db='nors_local_storage', db_address='mongodb://localhost:27017/'):
         
         logger.log('connecting to LOCAL database ' + db + ' at ' + db_address)
         try:
@@ -62,10 +67,5 @@ class Nors_LocalStorage_DAO:
         
     def dropDB(self):
         database = self.db_connection.drop_database(self.db_name)
-        
-
-sys.path.append('../')
-from norsutils.logmsgs.logger import Logger
-logger = Logger()
-   
+           
          

@@ -15,7 +15,8 @@ __email__ = "dmazzer@gmail.com"
 # import sys
 import signal
 from sensorservice.sensorservice import Nors_SensorService
-from genericsensor.genericsensor import Nors_GenericSensor
+# from genericsensor.genericsensor import Nors_GenericSensor
+from localstorage.localstorage import Nors_LocalStorage
 from sensors import sensor_dht
 from sensors import sensor_bmp180
 
@@ -25,7 +26,8 @@ if __name__ == '__main__':
 
     logger = Logger()
     logger.log("NORS - Noticia Remote Management and Supervisor")
-    sensor_service = Nors_SensorService()
+    local_storage = Nors_LocalStorage(CollectionName='nors_local_storage')
+    sensor_service = Nors_SensorService(local_storage)
 #     sensor_generic1 = Nors_GenericSensor(gs_name='fake1', gs_pull_interval=2, gs_read_fisical_interval=1)
 #     sensor_generic1.SignIn()
 #     sensor_generic2 = Nors_GenericSensor(gs_name='fake2', gs_pull_interval=2, gs_read_fisical_interval=1)
@@ -34,7 +36,6 @@ if __name__ == '__main__':
     sensor_dht = sensor_dht.RealSensor()
     sensor_bmp180 = sensor_bmp180.RealSensor()
 
-    
     def do_exit(sig, stack):
         raise SystemExit('Exiting')
      

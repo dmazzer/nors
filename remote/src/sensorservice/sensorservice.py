@@ -22,7 +22,7 @@ import json
 import signal
 
 class Nors_SensorService:
-    def __init__(self):
+    def __init__(self, LocalStorage_class):
         
         logger.log('SensorService started')
         
@@ -33,6 +33,8 @@ class Nors_SensorService:
         self.sensor_catalog_list = []
     
         self.SensorPulling()
+        
+        self.LocalStorage = LocalStorage_class
     
     def SensorPulling(self):
         t_pulling = Thread(target=self.SensorPullingWork, name='SensorPullingWork', args=(self.q, ) )
@@ -78,10 +80,20 @@ class Nors_SensorService:
 #                 logger.log('Sensor data requested.')
 
                 if poller.poll(15*1000): # 15s timeout in milliseconds
-                    result = socket.recv_json()
-                    logger.log(sensor['name'] + ': ' + str(result))
+                    sensor_data = socket.recv_json()
+                    logger.log(sensor['name'] + ': ' + str(sensor_data))
                     logger.log('-----')
-                    # TODO: Send data to database or cloud service. Needs design!!
+                    
+                    try:
+                        self.LocalStorage.store(json.loads(sensor_data))
+                    except Exception, e:
+                        logger.log('There is a problem to save the sensor value to database.')
+                        logger.log('Maybe a wrong or malformed JSON string...')
+                        print e.value
+                        raise SystemExit
+                    
+                    
+                    
                 else:
                     logger.log('Timeout sensor data request ' + sensor['name'] + ' ' + sensor['sensor_id'])
                 time.sleep(1)
