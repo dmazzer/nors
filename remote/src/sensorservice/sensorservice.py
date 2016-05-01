@@ -17,7 +17,6 @@ import sys
 from threading import Thread
 import Queue
 import time
-from uuid import uuid1
 import json
 import signal
 
