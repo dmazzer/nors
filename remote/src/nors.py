@@ -12,10 +12,8 @@ __license__ = "GPL"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
-# import sys
 import signal
 from sensorservice.sensorservice import Nors_SensorService
-# from genericsensor.genericsensor import Nors_GenericSensor
 from localstorage.localstorage import Nors_LocalStorage
 from sensors import sensor_dht
 from sensors import sensor_bmp180
