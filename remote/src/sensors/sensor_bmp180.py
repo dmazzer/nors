@@ -46,9 +46,14 @@ class RealSensor():
         else:
             self.bus = smbus.SMBus(0)
         
-
-        sensor = Nors_GenericSensor('BMP180', '51c8f22a-e191-11e5-914d-001dbaefa596',
-                                         'I2C', 5, 4, self.SensorRead, self.SensorDataProcessing)
+        self.sensor_name = 'BMP180'
+        sensor = Nors_GenericSensor(self.sensor_name, 
+                                    '51c8f22a-e191-11e5-914d-001dbaefa596',
+                                    'I2C',
+                                    5,
+                                    4,
+                                    self.SensorRead, 
+                                    self.SensorDataProcessing)
         sensor.SignIn()
         
 
@@ -67,10 +72,10 @@ class RealSensor():
             # pressure level.  For example, if the current pressure level is 1023.50 hPa
             # enter 102350 since we include two decimal places in the integer value
             altitude = str(self.bmp.readAltitude(99191))
-            logger.log( "Temp = " + temp + "  Press = " + pressure + " hPa" + "  Alt = " + altitude)     
+            logger.log( "Temp = " + temp + "  Press = " + pressure + " hPa" + "  Alt = " + altitude, 'debug')     
             return {'temp': temp, 'press': pressure, 'alt': altitude}
         except (IOError,TypeError) as e:
-            logger.log("Error")
+            logger.log("Error reading sensor " + self.sensor_name, 'error')
 
     def SensorDataProcessing(self,sensor_data):
         return sensor_data
@@ -78,14 +83,11 @@ class RealSensor():
 
 from norsutils.logmsgs.logger import Logger
 
-logger = Logger()
-logger.log("NORS - Noticia Remote Management and Supervisor")
-logger.log("SENSOR - BMP180 Barometer sensor")
+logger = Logger('debug')
+logger.log("SENSOR - BMP180 Barometer sensor", 'info')
 
 if __name__ == '__main__':
     sensor = RealSensor()
-    print sensor.SensorRead()
-
 
     def do_exit(sig, stack):
         raise SystemExit('Exiting')

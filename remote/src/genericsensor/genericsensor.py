@@ -23,6 +23,10 @@ import json
 import signal
 import random
 
+sys.path.append('../')
+from norsutils.logmsgs.logger import Logger
+logger = Logger('info')
+
 
 class Nors_GenericSensorStorage:
     '''
@@ -50,7 +54,7 @@ class Nors_GenericSensor:
                  SensorRead='none', SensorDataProcessing='none'):
         #self.logger = logger.Logger()
 
-        logger.log('GenericSensor started')
+        logger.log('GenericSensor started', 'debug')
         
         self.q = Queue.Queue()
         self.SensorDataStorage = Nors_GenericSensorStorage()
@@ -82,11 +86,11 @@ class Nors_GenericSensor:
             self.SensorRead = SensorRead
         
     def SensorDataProcessingGeneric(self, sensor_data):
-        logger.log(self.sensor_properties['name'] + ': Fake sensor processed')
+        logger.log(self.sensor_properties['name'] + ': Fake sensor processed', 'debug')
         return sensor_data
     
     def SensorReadGeneric(self):
-        logger.log(self.sensor_properties['name'] + ': Fake sensor readed')
+        logger.log(self.sensor_properties['name'] + ': Fake sensor readed', 'debug')
         return random.uniform(-1,1)
     
     def SignIn(self):
@@ -94,7 +98,7 @@ class Nors_GenericSensor:
         SignIn - Register a sensor in SensorService
         '''
         
-        logger.log('Registering sensor: ' + self.sensor_properties['name'])
+        logger.log('Registering sensor: ' + self.sensor_properties['name'], 'debug')
         
         # ZeroMQ Context
         context = zmq.Context()
@@ -116,7 +120,7 @@ class Nors_GenericSensor:
             raise IOError(self.sensor_properties['name'] + ': Timeout processing auth request')
 
         if result['result'] == 'registered':
-            logger.log(self.sensor_properties['name'] + ': Sensor Registered')
+            logger.log(self.sensor_properties['name'] + ': Sensor Registered', 'debug')
             t = Thread(target=self.SensorWork, name='SensorWork', args=(self.q, ))
             t.daemon = True
             t.start()
@@ -169,10 +173,7 @@ class Nors_GenericSensor:
 
 if __name__ == '__main__':
     
-    sys.path.append('../')
-    from norsutils.logmsgs.logger import Logger
-    logger = Logger()
-    logger.log("GenericSensor started by command line")
+    logger.log("GenericSensor started by command line", 'info')
     sensor = Nors_GenericSensor()
     sensor.SignIn()
 
@@ -183,10 +184,5 @@ if __name__ == '__main__':
     signal.signal(signal.SIGUSR1, do_exit)
     
     signal.pause()    
-    
-else:
-    sys.path.append('../')
-    from norsutils.logmsgs.logger import Logger
-    logger = Logger()
 
     

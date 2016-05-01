@@ -24,8 +24,15 @@ from grovepi import *
 
 class RealSensor():
     def __init__(self):
-        sensor = Nors_GenericSensor('DHT', '1e693dee-e0b6-11e5-8f44-001dbaefa596',
-                                         'Special', 5, 4, self.SensorRead, self.SensorDataProcessing)
+        
+        self.sensor_name = 'DHT'
+        sensor = Nors_GenericSensor(self.sensor_name,
+                                     '1e693dee-e0b6-11e5-8f44-001dbaefa596',
+                                     'Special',
+                                      5, 
+                                      4, 
+                                      self.SensorRead, 
+                                      self.SensorDataProcessing)
         sensor.SignIn()
         
 
@@ -36,10 +43,10 @@ class RealSensor():
             [ temp,hum ] = dht(dht_sensor_port,0)        #Get the temperature and Humidity from the DHT sensor
             t = str(temp)
             h = str(hum)
-            logger.log( "Temp = " + t + "  Humidity = " + h + "%")     
+            logger.log( "Temp = " + t + "  Humidity = " + h + "%", 'debug')     
             return {'temp': t, 'hum': h}
         except (IOError,TypeError) as e:
-            logger.log("Error")
+            logger.log("Error reading sensor " + self.sensor_name, 'error')
 
     def SensorDataProcessing(self,sensor_data):
         return sensor_data
@@ -47,9 +54,8 @@ class RealSensor():
 
 from norsutils.logmsgs.logger import Logger
 
-logger = Logger()
-logger.log("NORS - Noticia Remote Management and Supervisor")
-logger.log("SENSOR - DHT Humidity and Temperature")
+logger = Logger('debug')
+logger.log("SENSOR - DHT Humidity and Temperature", 'info')
 
 if __name__ == '__main__':
     sensor = RealSensor()
