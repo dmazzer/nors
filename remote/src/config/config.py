@@ -20,7 +20,7 @@ parser = OptionParser(usage="%prog: [options]")
 parser.add_option("-c", "--config-filename", action="store", type="string", dest="config_filename", help="load configuration file")
 (options, args) = parser.parse_args()
 if(str(options.config_filename) == "None"):
-    logger.log("config-filename cannot be empty", 'error')
+    logger.log("ERROR: config-filename cannot be empty", 'error')
     quit()
 
 class Configuration:
