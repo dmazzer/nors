@@ -19,14 +19,14 @@ from sensors import sensor_dht
 from sensors import sensor_bmp180
 
 from uuid import uuid1
-from config.config import Configuration
+from config.config import Nors_Configuration
 
 from norsutils.logmsgs.logger import Logger
 
 logger = Logger('debug')
 
 def load_configuration():
-    config = Configuration()
+    config = Nors_Configuration()
     server_ip = config.ReadConfig('server', 'ip')
     server_port = config.ReadConfig('server', 'port')
     

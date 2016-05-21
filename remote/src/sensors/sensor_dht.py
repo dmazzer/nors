@@ -37,7 +37,7 @@ class RealSensor():
         
 
     def SensorRead(self):
-        dht_sensor_port = 2        # Connect the DHt sensor to port 7
+        dht_sensor_port = 2        # GrovePI port
     
         try:
             [ temp,hum ] = dht(dht_sensor_port,0)        #Get the temperature and Humidity from the DHT sensor

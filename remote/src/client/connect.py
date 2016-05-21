@@ -19,13 +19,12 @@ class Nors_Connect():
     def __init__(self, server_ip, server_port, client_auth, client_id):
         
         logger.log('Sending GET command to server:', 'debug')
-        r = requests.get('http://127.0.0.1:8080/v1/server/info')
+        headers = {'content-type': 'application/json'}
+        r = requests.get('http://' +server_ip+':'+server_port+'/v1/server/info',headers=headers)
         logger.log('Response:', 'debug')
         logger.log(r.text, 'debug')
         logger.log('Headers:', 'debug')
         logger.log(r.headers, 'debug')
-        
-        pass
     
     def sign_in(self):
         pass

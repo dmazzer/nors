@@ -23,7 +23,7 @@ if(str(options.config_filename) == "None"):
     logger.log("ERROR: config-filename cannot be empty", 'error')
     quit()
 
-class Configuration:
+class Nors_Configuration:
     def __init__(self):
         
         logger.log("Configuration - Started", 'debug') # will not print anything

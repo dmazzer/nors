@@ -12,7 +12,7 @@ __email__ = "dmazzer@gmail.com"
 
 import sys
 sys.path.append('../')
-from config.config import Configuration
+from config.config import Nors_Configuration
 
 import unittest
 
@@ -44,6 +44,6 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         arg1 = sys.argv.pop()
         arg2 = sys.argv.pop()
-    config = Configuration()
+    config = Nors_Configuration()
     unittest.main()
     
