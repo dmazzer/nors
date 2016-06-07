@@ -14,18 +14,24 @@ import sys
 
 sys.path.append('../')
 from client.client import Nors_Client
-from nors import load_configuration
 from config.config import Nors_Configuration
 
 import unittest
 
+# def load_configuration():
+#     config = Nors_Configuration('config_client_test.ini')
+#     server_ip = config.ReadConfig('server', 'ip')
+#     server_port = config.ReadConfig('server', 'port')
+#     
+#     client_auth = config.ReadConfig('client', 'auth')
+#     client_id = config.ReadConfig('client', 'id')
+
 class Test_Client(unittest.TestCase):
     def setUp(self):
-        pass
+        self.c = Nors_Client(config)
     
     def test_init(self):
-        config = load_configuration()
-        c = Nors_Client(config)
+        self.c.conn.get_token()
 
     def tearDown(self):
         pass

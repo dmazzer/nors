@@ -34,15 +34,24 @@ class Nors_Client():
         self.config = config;
         self.load_configuration()
         
-        conn = Nors_Connect(self.server_ip, self.server_port, self.client_auth, self.client_id)
+        self.conn = Nors_Connect(self.server_ip, 
+                            self.server_port, 
+                            self.server_api_path, 
+                            self.server_token_path, 
+                            self.client_auth, 
+                            self.client_id)
     
     
     def load_configuration(self):
         self.server_ip = self.config.ReadConfig('server', 'ip')
         self.server_port = self.config.ReadConfig('server', 'port')
+        self.server_api_path = self.config.ReadConfig('server', 'api_path')
+        self.server_token_path = self.config.ReadConfig('server', 'token_path')
         
         self.client_id = self.config.ReadConfig('client', 'id')
         self.client_auth = self.config.ReadConfig('client', 'auth')
+
+        
         
 
 # r = requests.get('http://httpbin.org/ip')
