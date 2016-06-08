@@ -30,12 +30,16 @@ class Test_Client(unittest.TestCase):
     def setUp(self):
         self.c = Nors_Client(config)
     
-    def test_init(self):
-        self.c.conn.get_token()
+#     def test_gettoken(self):
+#         token = self.c.conn.get_token()
+#         self.assertNotEqual(token, None)
 
+    def test_access_protected_resource(self):
+        r = self.c.conn.get_resource('/products/')
+        #self.assertNotEqual(token, None)
+    
     def tearDown(self):
         pass
-        
         
 
 if __name__ == '__main__':

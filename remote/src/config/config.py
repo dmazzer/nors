@@ -24,11 +24,14 @@ if(str(options.config_filename) == "None"):
     quit()
 
 class Nors_Configuration:
-    def __init__(self):
+    def __init__(self, filename=None):
         
         logger.log("Configuration - Started", 'debug') # will not print anything
 
-        self.config_filename = options.config_filename;
+        if filename is None:
+            self.config_filename = options.config_filename
+        else:
+            self.config_filename = filename
         self.config = self.__LoadConfigFile(self.config_filename)
 
     def __LoadConfigFile(self, config_filename):
