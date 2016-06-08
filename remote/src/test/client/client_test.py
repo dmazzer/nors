@@ -11,12 +11,13 @@ __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
 import sys
+import json
+import unittest
 
 sys.path.append('../')
 from client.client import Nors_Client
 from config.config import Nors_Configuration
 
-import unittest
 
 # def load_configuration():
 #     config = Nors_Configuration('config_client_test.ini')
@@ -34,9 +35,15 @@ class Test_Client(unittest.TestCase):
 #         token = self.c.conn.get_token()
 #         self.assertNotEqual(token, None)
 
-    def test_access_protected_resource(self):
+    def test_get_protected_resource(self):
         r = self.c.conn.get_resource('/products/')
-        #self.assertNotEqual(token, None)
+        self.assertNotEqual(r, None)
+
+    def test_post_protected_resource(self):
+        data = json.dumps({"name":"p3"})
+        r = self.c.conn.post_resource('/products/', data)
+        r = self.c.conn.get_resource('/products/19')
+        self.assertNotEqual(r, None)
     
     def tearDown(self):
         pass

@@ -65,6 +65,7 @@ class Nors_Connect():
         if r.status_code == 200:
             return r.json()["access_token"]
         
+    #@staticmethod
     def _token_manager(self, renew=False):
         if renew is True:
             token = self.get_token()
@@ -103,9 +104,47 @@ class Nors_Connect():
         else:
             return None
         
+    def _post_resource(self, resource, token, data_json):
+        logger.log('----------------------------------------------------------', 'debug')
+        logger.log('POST at resource ' + resource, 'debug')
+        
+        headers = {'content-type': 'application/json',
+                   'Authorization': 'JWT ' + token}
+        
+        request_string = self.server_address + str(resource)
+        logger.log('Request String: ' + request_string, 'debug')
+        
+        r = requests.post(request_string, data=data_json, headers=headers)
+
+        logger.log('Response:', 'debug')
+        logger.log(r.text, 'debug')
+        logger.log('Headers:', 'debug')
+        logger.log(r.headers, 'debug')
+    
+        if r.status_code == 200:
+            if r.headers.get('content-type') == 'application/json':
+                return r.json()
+            else:
+                return r.text
+        else:
+            return None
+        
+        
     def get_resource(self, resource, data=None):
-        # TODO: If the return is 40x because an expired token, this should request a new one
-        return self._get_resource(resource, data=None, token=self._token_manager(renew=True))
+        # TODO: If the return is 40x because an expired token, this should trigger a new token request
+        t = token=self._token_manager(renew=True)
+        return self._get_resource(resource, data=None, token=t)
+    
+    def post_resource(self, resource, data):
+        if type(data) is dict:
+            data_json = json.dumps(data, encoding='utf8')
+        else:
+#             logger.log('POST ERROR: data is not dict, sending as is...', 'debug')
+            data_json = data
+        t = token=self._token_manager(renew=True)
+        logger.log(type(t), 'debug')
+        return self._post_resource(resource, t, data_json)
+    
     
         
             
