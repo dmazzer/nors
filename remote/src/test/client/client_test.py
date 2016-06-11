@@ -11,25 +11,42 @@ __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
 import sys
+import json
+import unittest
 
 sys.path.append('../')
 from client.client import Nors_Client
-from nors import load_configuration
 from config.config import Nors_Configuration
 
-import unittest
+
+# def load_configuration():
+#     config = Nors_Configuration('config_client_test.ini')
+#     server_ip = config.ReadConfig('server', 'ip')
+#     server_port = config.ReadConfig('server', 'port')
+#     
+#     client_auth = config.ReadConfig('client', 'auth')
+#     client_id = config.ReadConfig('client', 'id')
 
 class Test_Client(unittest.TestCase):
     def setUp(self):
-        pass
+        self.c = Nors_Client(config)
     
-    def test_init(self):
-        config = load_configuration()
-        c = Nors_Client(config)
+#     def test_gettoken(self):
+#         token = self.c.conn.get_token()
+#         self.assertNotEqual(token, None)
 
+    def test_get_protected_resource(self):
+        r = self.c.conn.get_resource('/sensors/')
+        self.assertNotEqual(r, None)
+
+    def test_post_protected_resource(self):
+        data = json.dumps({"name":"p3"})
+        r = self.c.conn.post_resource('/sensors/', data)
+        r = self.c.conn.get_resource('/sensors/1')
+        self.assertNotEqual(r, None)
+    
     def tearDown(self):
         pass
-        
         
 
 if __name__ == '__main__':

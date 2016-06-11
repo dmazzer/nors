@@ -12,16 +12,16 @@ __license__ = "GPL"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
-import signal
 from sensorservice.sensorservice import Nors_SensorService
 from localstorage.localstorage import Nors_LocalStorage
+from config.config import Nors_Configuration
+from norsutils.logmsgs.logger import Logger
 from sensors import sensor_dht
 from sensors import sensor_bmp180
 
+import signal
 from uuid import uuid1
-from config.config import Nors_Configuration
 
-from norsutils.logmsgs.logger import Logger
 
 logger = Logger('debug')
 
