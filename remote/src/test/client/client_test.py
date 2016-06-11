@@ -36,13 +36,13 @@ class Test_Client(unittest.TestCase):
 #         self.assertNotEqual(token, None)
 
     def test_get_protected_resource(self):
-        r = self.c.conn.get_resource('/products/')
+        r = self.c.conn.get_resource('/sensors/')
         self.assertNotEqual(r, None)
 
     def test_post_protected_resource(self):
         data = json.dumps({"name":"p3"})
-        r = self.c.conn.post_resource('/products/', data)
-        r = self.c.conn.get_resource('/products/19')
+        r = self.c.conn.post_resource('/sensors/', data)
+        r = self.c.conn.get_resource('/sensors/1')
         self.assertNotEqual(r, None)
     
     def tearDown(self):

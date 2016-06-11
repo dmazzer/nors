@@ -2,7 +2,7 @@
 connect.py: Authenticate and register on remote server   
 
 """
-import json
+
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS Project"
 __credits__ = ""
@@ -11,10 +11,11 @@ __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
 
+import json
+import requests
+
 from norsutils.logmsgs.logger import Logger
 logger = Logger('debug')
-
-import requests
 
 class Nors_Connect():
     def __init__(self, server_ip, 
