@@ -78,17 +78,19 @@ class Sensor(db.Document):
         return '<Product %r>' % self.id    
     
     def get_url(self):
-        return url_for('api.get_sensor', id=self.id, _external=True)
+        return url_for('api.get_sensor', id=self.id)
  
     def export_data(self):
         return {
             'self_url': self.get_url(),
-            'name': self.name
+            'name': self.name,
+            'id': self.id
         }
  
     def import_data(self, data):
         try:
             self.name = data['name']
+            self.id = data['id']
         except KeyError as e:
             raise ValidationError('Invalid sensor: missing ' + e.args[0])
         return self

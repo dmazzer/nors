@@ -1,4 +1,16 @@
+""" 
+app.py: Server Falsk application  
+
+"""
+
+__author__ = "Daniel Mazzer"
+__copyright__ = "Copyright 2016, NORS project"
+__credits__ = ""
+__license__ = "MIT"
+__maintainer__ = "Daniel Mazzer"
+__email__ = "dmazzer@gmail.com"
 import os
+
 from flask import Flask, jsonify, g
 # from flask.ext.sqlalchemy import SQLAlchemy
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
@@ -41,7 +53,8 @@ def create_app(config_name):
     'port': 27017,
 #    'username':'webapp',
 #    'password':'pwd123'
-}
+    }
+    
     db.init_app(app)
     app.session_interface = MongoEngineSessionInterface(db)
 
