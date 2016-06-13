@@ -70,7 +70,7 @@ class Sensor(db.Document):
 #     name = db.Column(db.String(64), index=True)
 #     items = db.relationship('Item', backref='sensor', lazy='dynamic')
     created_at = db.DateTimeField(default=datetime.now(), required=True)
-    id = db.StringField(max_length=255, required=True)
+    id = db.DecimalField(required=True)
     name = db.StringField(max_length=255, required=True)
     items = db.DecimalField()
     
@@ -88,6 +88,7 @@ class Sensor(db.Document):
         }
  
     def import_data(self, data):
+        print(data)
         try:
             self.name = data['name']
             self.id = data['id']

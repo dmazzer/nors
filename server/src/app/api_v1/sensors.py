@@ -21,6 +21,7 @@ def get_sensor(id):
 def new_sensor():
     sensor = Sensor()
     sensor.import_data(request.json)
+    print (sensor.name, sensor.id)
     sensor.save()
 #     db.objects.add(sensor)
 #     db.objects.commit()
