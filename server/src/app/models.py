@@ -70,7 +70,7 @@ class Sensor(db.Document):
 #     name = db.Column(db.String(64), index=True)
 #     items = db.relationship('Item', backref='sensor', lazy='dynamic')
     created_at = db.DateTimeField(default=datetime.now(), required=True)
-    id = db.StringField(max_length=255, required=True)
+    id = db.DecimalField(required=True)
     name = db.StringField(max_length=255, required=True)
     items = db.DecimalField()
     
@@ -78,17 +78,20 @@ class Sensor(db.Document):
         return '<Product %r>' % self.id    
     
     def get_url(self):
-        return url_for('api.get_sensor', id=self.id, _external=True)
+        return url_for('api.get_sensor', id=self.id)
  
     def export_data(self):
         return {
             'self_url': self.get_url(),
-            'name': self.name
+            'name': self.name,
+            'id': self.id
         }
  
     def import_data(self, data):
+        print(data)
         try:
             self.name = data['name']
+            self.id = data['id']
         except KeyError as e:
             raise ValidationError('Invalid sensor: missing ' + e.args[0])
         return self

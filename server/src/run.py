@@ -1,4 +1,17 @@
 #!/usr/bin/env python
+""" 
+run.py: Server application
+
+"""
+
+__author__ = "Daniel Mazzer"
+__copyright__ = "Copyright 2016, NORS project"
+__credits__ = ""
+__license__ = "MIT"
+__maintainer__ = "Daniel Mazzer"
+__email__ = "dmazzer@gmail.com"
+
+
 import os
 from app import create_app, db
 from app.models import User
