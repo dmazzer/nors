@@ -9,6 +9,7 @@ __credits__ = ""
 __license__ = "MIT"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
+
 import os
 
 from flask import Flask, jsonify, g
