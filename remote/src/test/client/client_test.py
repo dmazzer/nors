@@ -40,7 +40,7 @@ class Test_Client(unittest.TestCase):
         self.assertNotEqual(r, None)
 
     def test_post_protected_resource(self):
-        data = json.dumps({"name":"p3", "id":1000})
+        data = json.dumps({"name":"p3", "idd":"1000"})
         r = self.c.conn.post_resource('/sensors/', data)
 #         r = self.c.conn.get_resource('/sensors/1')
         self.assertNotEqual(r, None)
