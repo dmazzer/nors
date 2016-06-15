@@ -70,7 +70,7 @@ class Sensor(db.Document):
 #     name = db.Column(db.String(64), index=True)
 #     items = db.relationship('Item', backref='sensor', lazy='dynamic')
     created_at = db.DateTimeField(default=datetime.now(), required=True)
-    idd = db.StringField(max_length=255, required=True)
+    idd = db.StringField(max_length=255, required=True, unique=True)
     name = db.StringField(max_length=255, required=True)
     items = db.DecimalField()
     

@@ -3,6 +3,8 @@ from . import api
 from .. import db
 from ..models import Sensor
 from ..decorators import json, paginate
+from mongoengine import OperationError
+from mongoengine.errors import NotUniqueError
 
 
 @api.route('/sensors/', methods=['GET'])
@@ -21,9 +23,11 @@ def get_sensor(idd):
 def new_sensor():
     sensor = Sensor()
     sensor.import_data(request.json)
-    sensor.save()
-#     db.objects.add(sensor)
-#     db.objects.commit()
+    try:
+        sensor.save()
+    except NotUniqueError as err:
+        raise NotUniqueError(err)
+        #verificar se existe como fazer parse de err
     return {}, 201, {'Location': sensor.get_url()}
 
 @api.route('/sensors/<idd>', methods=['PUT'])
