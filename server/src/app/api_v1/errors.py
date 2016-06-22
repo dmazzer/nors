@@ -1,6 +1,7 @@
 from flask import jsonify
 from ..exceptions import ValidationError
 from . import api
+from mongoengine.errors import NotUniqueError
 
 
 @api.errorhandler(ValidationError)
@@ -32,4 +33,12 @@ def internal_server_error(e):
     response = jsonify({'status': 500, 'error': 'internal server error',
                         'message': e.args[0]})
     response.status_code = 500
+    return response
+
+
+@api.errorhandler(NotUniqueError)
+def key_error(e):
+    response = jsonify({'status': 409, 'error': 'not unique error',
+                        'message': str(e.args[0])})
+    response.status_code = 409
     return response
