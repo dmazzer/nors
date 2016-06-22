@@ -76,12 +76,14 @@ class Nors_Connect():
         
         return token
     
-    def _get_resource(self, resource, token, data=None):
+    def _get_resource(self, resource, token, data=None, headers={}):
         logger.log('----------------------------------------------------------', 'debug')
         logger.log('GET at resource ' + resource, 'debug')
         
-        headers = {'content-type': 'application/json',
-                   'Authorization': 'JWT ' + token}
+        headers = headers.copy()
+        headers['Authorization'] = 'JWT ' + token
+        headers['Content-Type'] = 'application/json'
+        headers['Accept'] = 'application/json'
         
         # TODO:
         if data is not None:
@@ -96,21 +98,28 @@ class Nors_Connect():
         logger.log(r.text, 'debug')
         logger.log('Headers:', 'debug')
         logger.log(r.headers, 'debug')
+        logger.log('Return Code:', 'debug')
+        logger.log(r.status_code, 'debug')
     
         if r.status_code == 200:
             if r.headers.get('content-type') == 'application/json':
-                return r.json()
+                return r.status_code, r.json()
             else:
-                return r.text
+                return r.status_code, r.text
         else:
-            return None
+            return r.status_code, None
         
-    def _post_resource(self, resource, token, data_json):
+    def _post_resource(self, resource, token, data_json, headers={}):
         logger.log('----------------------------------------------------------', 'debug')
         logger.log('POST at resource ' + resource, 'debug')
         
-        headers = {'content-type': 'application/json',
-                   'Authorization': 'JWT ' + token}
+        headers = headers.copy()
+        headers['Authorization'] = 'JWT ' + token
+        headers['Content-Type'] = 'application/json'
+        headers['Accept'] = 'application/json'
+
+#         headers = {'content-type': 'application/json',
+#                    'Authorization': 'JWT ' + token}
         
         request_string = self.server_address + str(resource)
         logger.log('Request String: ' + request_string, 'debug')
@@ -121,14 +130,16 @@ class Nors_Connect():
         logger.log(r.text, 'debug')
         logger.log('Headers:', 'debug')
         logger.log(r.headers, 'debug')
-    
+        logger.log('Return Code:', 'debug')
+        logger.log(r.status_code, 'debug')
+   
         if r.status_code == 200:
             if r.headers.get('content-type') == 'application/json':
-                return r.json()
+                return r.status_code, r.json()
             else:
-                return r.text
+                return r.status_code, r.text
         else:
-            return None
+            return r.status_code, None
         
         
     def get_resource(self, resource, data=None):
@@ -142,8 +153,8 @@ class Nors_Connect():
         else:
 #             logger.log('POST ERROR: data is not dict, sending as is...', 'debug')
             data_json = data
+            
         t = token=self._token_manager(renew=True)
-        logger.log(type(t), 'debug')
         return self._post_resource(resource, t, data_json)
     
     
