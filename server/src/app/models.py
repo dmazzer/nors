@@ -88,7 +88,6 @@ class Sensor(db.Document):
         }
  
     def import_data(self, data):
-        print(data)
         try:
             self.name = data['name']
             self.idd = data['idd']
