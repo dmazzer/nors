@@ -18,7 +18,7 @@ import unittest
 sys.path.append('../') # call test from 'test' folder
 from models import sensor
 
-class Test_Client(unittest.TestCase):
+class Test_Sensor(unittest.TestCase):
     def setUp(self):
         self.s = sensor.Sensor('ID', 'NAME', 'DESCRIPTION', sensor.SensorInterface.analog)
     

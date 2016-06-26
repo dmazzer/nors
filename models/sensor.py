@@ -1,12 +1,20 @@
-'''
-Created on Jun 24, 2016
+""" 
+sensor.py: Sensor model class
 
-@author: mazzer
-'''
+"""
+
+__author__ = "Daniel Mazzer"
+__copyright__ = "Copyright 2016, NORS project"
+__credits__ = ""
+__license__ = "MIT"
+__maintainer__ = "Daniel Mazzer"
+__email__ = "dmazzer@gmail.com"
 
 from collections import namedtuple
 from enum import Enum
 import json
+
+from .utils import EnumEncoder
 
 SensorInterface = Enum('Interface', 
                  'analog digital virtual SPI i2c UART WiFi 6LoWPAN ZigBee LoRa other-wireless other-wired',
@@ -33,7 +41,7 @@ class Sensor():
     def add_stream(self,
                     name, 
                     description,
-                    type=None, 
+                    sensor_type=None, 
                     unit=None,
                     sensing_rate=None,
                     value_nominal=None,
@@ -52,7 +60,7 @@ class Sensor():
         
         self.sensor.stream.append({'name': name,
                                    'description': description,
-                                   'type': type,
+                                   'sensor_type': sensor_type,
                                    'unit': unit,
                                    'sensing_rate': sensing_rate,
                                    'value_nominal': value_nominal,
@@ -80,20 +88,3 @@ class Sensor():
     def get_sensor_json(self, indentation=None):
         return json.dumps(self.get_sensor(), encoding='UTF-8', cls=EnumEncoder, indent=indentation)
     
-
-class EnumEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Enum):
-            return {"__enum__": str(obj)}
-        return json.JSONEncoder.default(self, obj)
-
-def as_enum(d):
-    if "__enum__" in d:
-        name, member = d["__enum__"].split(".")
-        return getattr(globals()[name], member)
-    else:
-        return d
-                                 
-                                   
-                                   
-                                   
