@@ -10,7 +10,6 @@ __license__ = "MIT"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
-import sys
 
 from norsutils.logmsgs.logger import Logger
 from dao import Nors_LocalStorage_DAO
@@ -19,12 +18,13 @@ logger = Logger()
 
 
 class Nors_LocalStorage():
-    def __init__(self, CollectionName='nors_local_storage'):
+    def __init__(self, config, CollectionName='nors_local_storage'):
 
         self.local_db_collection_name = CollectionName
         
         # TODO: self.max_db_entries is the max number of entries in DB, if exceeds 
         # new data is droped. The values 0 disable the entries limitation.
+        # This feature is not yet implemented.
         self.max_db_entries = 10000
 
         # TODO: self.db_entries_ttl may be used to define the time to live
