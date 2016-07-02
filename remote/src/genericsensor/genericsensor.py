@@ -56,7 +56,7 @@ class Nors_GenericSensor:
                  gs_name = 'Generic Sensor', 
                  gs_id = '', 
                  gs_description = 'fake generic sensor', 
-                 gs_interface = sensor.SensorInterface.virtual,
+                 gs_interface = SensorModel.SensorInterface.virtual,
                  gs_pull_interval = 5, 
                  gs_read_interval = 1,
                  SensorRead = 'none', 
@@ -74,19 +74,11 @@ class Nors_GenericSensor:
             sensor_id = gs_id
             
         self.sensor_model = SensorModel.Sensor(sensor_id, 
-                                          gs_name, 
-                                          gs_description, 
-                                          gs_interface, 
-                                          gs_interface, 
-                                          gs_pull_interval, 
-                                          gs_read_interval)
-        
-#         self.sensor_properties = {'name': gs_name,
-#                                   'sensor_id': sensor_id,
-#                                   'type': gs_type,
-#                                   'pull_interval': gs_pull_interval,
-#                                   'read_fisical_interval': gs_read_fisical_interval
-#                                   }
+                                              gs_name, 
+                                              gs_description, 
+                                              gs_interface, 
+                                              gs_pull_interval, 
+                                              gs_read_interval)
         
         logger.log(self.sensor_model.get_property('name') + ' UUID: ' + sensor_id)
         #logger.log(self.sensor_properties['name'] + ' UUID: ' + sensor_id)
@@ -139,7 +131,7 @@ class Nors_GenericSensor:
             raise IOError(self.sensor_model.get_property('name') + ': Timeout processing auth request')
 
         if result['result'] == 'registered':
-            logger.log(self.self.sensor_model.get_property('name') + ': Sensor Registered', 'debug')
+            logger.log(self.sensor_model.get_property('name') + ': Sensor Registered', 'debug')
             t = Thread(target=self.SensorWork, name='SensorWork', args=(self.q, ))
             t.daemon = True
             t.start()
@@ -157,7 +149,7 @@ class Nors_GenericSensor:
         '''
         
         while True:
-            time.sleep(self.self.sensor_model.get_property('read_interval'))
+            time.sleep(self.sensor_model.get_property('read_interval'))
             sensor_data = self.SensorRead()
             sensor_data_processed = self.SensorDataProcessing(sensor_data)
             self.SensorDataStorage.put(sensor_data_processed)

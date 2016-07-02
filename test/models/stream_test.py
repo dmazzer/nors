@@ -45,6 +45,41 @@ class Test_Stream(unittest.TestCase):
         self.assertEqual(ss2d['streams']['NAME1'], 1)
         self.assertEqual(ss2d['streams']['NAME2'], 2)
         self.assertEqual(ss2d['streams']['NAME3'], 3)
+
+    def test_get_property(self):
+        ss1 = self.s1.get_property('sensor_id')
+        self.assertEqual(ss1, 'ID1')
+
+#     def test_get_stream_property1(self):
+#         self.s.add_stream('st1', 'des1', value_max=2)
+#         self.s.add_stream('st2', 'des2', value_max=3)
+#         s1 = self.s.get_stream_property('st1', 'value_max')
+#         self.assertEqual(s1, 2)
+#     
+#     def test_get_stream_property2(self):
+#         self.s.add_stream('st1', 'des1', value_max=2)
+#         self.s.add_stream('st2', 'des2', value_max=3)
+#         s1 = self.s.get_stream_property('st2', 'value_max')
+#         self.assertEqual(s1, 3)
+#         
+#     def test_get_stream_property3(self):
+#         self.s.add_stream('st1', 'des1', value_max=2)
+#         self.s.add_stream('st2', 'des2', value_max=3)
+#         s1 = self.s.get_stream_property('st3', 'value_max')
+#         self.assertEqual(s1, None)
+# 
+#     def test_set_stream_property1(self):
+#         self.s.add_stream('st1', 'des1', value_max=2)
+#         self.s.add_stream('st2', 'des2', value_max=3)
+#         
+#         s1 = self.s.get_stream_property('st1', 'value_max')
+#         self.assertEqual(s1, 2)
+#         
+#         s1 = self.s.set_stream_property('st1', 'value_max', 5)
+#         self.assertEqual(s1, True)
+#         
+#         s1 = self.s.get_stream_property('st1', 'value_max')
+#         self.assertEqual(s1, 5)
     
     def tearDown(self):
         pass

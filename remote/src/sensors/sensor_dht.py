@@ -10,7 +10,7 @@ http://www.seeedstudio.com/wiki/Grove_-_Temperature_and_Humidity_Sensor
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
 __credits__ = ""
-__license__ = "GPL"
+__license__ = "MIT"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
@@ -34,7 +34,7 @@ class RealSensor():
                  gs_read_interval = 4,
                  SensorRead = self.SensorRead, 
                  SensorDataProcessing = self.SensorDataProcessing)
-        
+
         sensor.SignIn()
         
 

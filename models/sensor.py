@@ -93,11 +93,15 @@ class Sensor():
     def get_property(self, property):
         return self.get_sensor()[property]
         
-    def get_stream_property(self, property, stream_name=None):
-        if stream_name == None:
-            return None
+    def get_stream_property(self, stream_name, property):
         for item in self.get_sensor()['stream']:
             if item['name'] is stream_name:
                 return item[property]
         return None
     
+    def set_stream_property(self, stream_name, property, value):
+        for item in self.get_sensor()['stream']:
+            if item['name'] is stream_name:
+                item['property'] = value
+                return True
+        return False

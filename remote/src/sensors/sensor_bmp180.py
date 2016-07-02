@@ -10,7 +10,7 @@ http://www.seeedstudio.com/wiki/Grove_-_Barometer_Sensor_(BMP180)
 __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
 __credits__ = ""
-__license__ = "GPL"
+__license__ = "MIT"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
@@ -24,7 +24,6 @@ sys.path.append('../../GrovePi/Software/Python/grove_barometer_sensors/barometri
 sys.path.append('../GrovePi/Software/Python/grove_barometer_sensors/barometric_sensor_bmp180/')
 import smbus
 import RPi.GPIO as GPIO
-#import grovepi
 from grove_i2c_barometic_sensor_BMP180 import BMP085
 
 
@@ -47,13 +46,15 @@ class RealSensor():
             self.bus = smbus.SMBus(0)
         
         self.sensor_name = 'BMP180'
-        sensor = Nors_GenericSensor(self.sensor_name, 
-                                    '51c8f22a-e191-11e5-914d-001dbaefa596',
-                                    'I2C',
-                                    5,
-                                    4,
-                                    self.SensorRead, 
-                                    self.SensorDataProcessing)
+        sensor = Nors_GenericSensor(gs_name = self.sensor_name,
+                 gs_id = '51c8f22a-e191-11e5-914d-001dbaefa596',
+                 gs_description = 'BMP180 Barometer sensor', 
+                 gs_interface = None,
+                 gs_pull_interval = 5, 
+                 gs_read_interval = 4,
+                 SensorRead = self.SensorRead, 
+                 SensorDataProcessing = self.SensorDataProcessing)
+
         sensor.SignIn()
         
 

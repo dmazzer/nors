@@ -53,20 +53,33 @@ class Test_Sensor(unittest.TestCase):
     def test_get_stream_property1(self):
         self.s.add_stream('st1', 'des1', value_max=2)
         self.s.add_stream('st2', 'des2', value_max=3)
-        s1 = self.s.get_stream_property('value_max', stream_name='st1')
+        s1 = self.s.get_stream_property('st1', 'value_max')
         self.assertEqual(s1, 2)
     
     def test_get_stream_property2(self):
         self.s.add_stream('st1', 'des1', value_max=2)
         self.s.add_stream('st2', 'des2', value_max=3)
-        s1 = self.s.get_stream_property('value_max', stream_name='st2')
+        s1 = self.s.get_stream_property('st2', 'value_max')
         self.assertEqual(s1, 3)
         
     def test_get_stream_property3(self):
         self.s.add_stream('st1', 'des1', value_max=2)
         self.s.add_stream('st2', 'des2', value_max=3)
-        s1 = self.s.get_stream_property('value_max', stream_name='st3')
+        s1 = self.s.get_stream_property('st3', 'value_max')
         self.assertEqual(s1, None)
+
+    def test_set_stream_property1(self):
+        self.s.add_stream('st1', 'des1', value_max=2)
+        self.s.add_stream('st2', 'des2', value_max=3)
+        
+        s1 = self.s.get_stream_property('st1', 'value_max')
+        self.assertEqual(s1, 2)
+        
+        s1 = self.s.set_stream_property('st1', 'value_max', 5)
+        self.assertEqual(s1, True)
+        
+        s1 = self.s.get_stream_property('st1', 'value_max')
+        self.assertEqual(s1, 5)
     
     def tearDown(self):
         pass

@@ -50,3 +50,20 @@ class Stream():
     
     def getDateTime(self):
         return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    
+    def get_property(self, property):
+        return self.get_stream()[property]
+        
+#     def get_stream_property(self, stream_name, property):
+#         for item in self.get_stream()['stream']:
+#             if item['name'] is stream_name:
+#                 return item[property]
+#         return None
+#     
+#     def set_stream_property(self, stream_name, property, value):
+#         for item in self.get_stream()['stream']:
+#             if item['name'] is stream_name:
+#                 item['property'] = value
+#                 return True
+#         return False
+#     
