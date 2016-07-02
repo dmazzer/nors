@@ -26,13 +26,15 @@ class RealSensor():
     def __init__(self):
         
         self.sensor_name = 'DHT'
-        sensor = Nors_GenericSensor(self.sensor_name,
-                                     '1e693dee-e0b6-11e5-8f44-001dbaefa596',
-                                     'Special',
-                                      5, 
-                                      4, 
-                                      self.SensorRead, 
-                                      self.SensorDataProcessing)
+        sensor = Nors_GenericSensor(gs_name = self.sensor_name,
+                 gs_id = '1e693dee-e0b6-11e5-8f44-001dbaefa596',
+                 gs_description = 'DHT Humidity and Temperature', 
+                 gs_interface = None,
+                 gs_pull_interval = 5, 
+                 gs_read_interval = 4,
+                 SensorRead = self.SensorRead, 
+                 SensorDataProcessing = self.SensorDataProcessing)
+        
         sensor.SignIn()
         
 

@@ -20,7 +20,7 @@ from models import sensor
 
 class Test_Sensor(unittest.TestCase):
     def setUp(self):
-        self.s = sensor.Sensor('ID', 'NAME', 'DESCRIPTION', sensor.SensorInterface.analog)
+        self.s = sensor.Sensor( 'ID', 'NAME', 'DESCRIPTION', sensor.SensorInterface.analog, 2, 1)
     
     def test_get_sensor(self):
         s1 = self.s.get_sensor()
@@ -29,6 +29,8 @@ class Test_Sensor(unittest.TestCase):
         self.assertEqual(s1['description'], 'DESCRIPTION')
         self.assertEqual(s1['interface'], sensor.SensorInterface.analog)
         self.assertEqual(s1['stream'], [])
+        self.assertEqual(s1['pull_interval'], 2)
+        self.assertEqual(s1['read_interval'], 1)
     
     def test_add_get_stream(self):
         self.assertEqual(self.s.get_stream_num(), 0)
@@ -44,7 +46,27 @@ class Test_Sensor(unittest.TestCase):
         s1 = self.s.get_sensor_json(indentation=1)
         print(s1)
         
+    def test_get_property(self):
+        s1 = self.s.get_property('description')
+        self.assertEqual(s1, 'DESCRIPTION')
+
+    def test_get_stream_property1(self):
+        self.s.add_stream('st1', 'des1', value_max=2)
+        self.s.add_stream('st2', 'des2', value_max=3)
+        s1 = self.s.get_stream_property('value_max', stream_name='st1')
+        self.assertEqual(s1, 2)
+    
+    def test_get_stream_property2(self):
+        self.s.add_stream('st1', 'des1', value_max=2)
+        self.s.add_stream('st2', 'des2', value_max=3)
+        s1 = self.s.get_stream_property('value_max', stream_name='st2')
+        self.assertEqual(s1, 3)
         
+    def test_get_stream_property3(self):
+        self.s.add_stream('st1', 'des1', value_max=2)
+        self.s.add_stream('st2', 'des2', value_max=3)
+        s1 = self.s.get_stream_property('value_max', stream_name='st3')
+        self.assertEqual(s1, None)
     
     def tearDown(self):
         pass

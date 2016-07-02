@@ -26,16 +26,18 @@ class Sensor():
     Sensor model where properties are organized inside a named tuple
     '''
      
-    def __init__(self, sensor_id, name, description, sensor_interface):
+    def __init__(self, sensor_id, name, description, sensor_interface, pull_interval, read_interval):
         
         
         Model = namedtuple('Sensor',
-                            'sensor_id name description stream interface')
+                            'name sensor_id description interface pull_interval  read_interval stream')
         
         self.sensor = Model(name = name,
                             sensor_id = sensor_id,
                             description = description, 
                             interface = sensor_interface,
+                            pull_interval = pull_interval,
+                            read_interval = read_interval,
                             stream = [])  
         
     def add_stream(self,
@@ -87,4 +89,15 @@ class Sensor():
     
     def get_sensor_json(self, indentation=None):
         return json.dumps(self.get_sensor(), encoding='UTF-8', cls=EnumEncoder, indent=indentation)
+    
+    def get_property(self, property):
+        return self.get_sensor()[property]
+        
+    def get_stream_property(self, property, stream_name=None):
+        if stream_name == None:
+            return None
+        for item in self.get_sensor()['stream']:
+            if item['name'] is stream_name:
+                return item[property]
+        return None
     

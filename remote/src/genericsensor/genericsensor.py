@@ -27,6 +27,8 @@ sys.path.append('../')
 from norsutils.logmsgs.logger import Logger
 logger = Logger('info')
 
+sys.path.append('../../')
+from models import sensor as SensorModel
 
 class Nors_GenericSensorStorage:
     '''
@@ -50,8 +52,15 @@ class Nors_GenericSensor:
     A real sensor reading application must implements SensorRead and SensorDataProcessing
     '''
     
-    def __init__(self, gs_name='Generic Sensor', gs_id='', gs_type='generic', gs_pull_interval=5, gs_read_fisical_interval=1,
-                 SensorRead='none', SensorDataProcessing='none'):
+    def __init__(self, 
+                 gs_name = 'Generic Sensor', 
+                 gs_id = '', 
+                 gs_description = 'fake generic sensor', 
+                 gs_interface = sensor.SensorInterface.virtual,
+                 gs_pull_interval = 5, 
+                 gs_read_interval = 1,
+                 SensorRead = 'none', 
+                 SensorDataProcessing = 'none'):
         #self.logger = logger.Logger()
 
         logger.log('GenericSensor started', 'debug')
@@ -63,14 +72,24 @@ class Nors_GenericSensor:
             sensor_id = str(uuid1())
         else:
             sensor_id = gs_id
-        self.sensor_properties = {'name': gs_name,
-                                  'sensor_id': sensor_id,
-                                  'type': gs_type,
-                                  'pull_interval': gs_pull_interval,
-                                  'read_fisical_interval': gs_read_fisical_interval
-                                  }
+            
+        self.sensor_model = SensorModel.Sensor(sensor_id, 
+                                          gs_name, 
+                                          gs_description, 
+                                          gs_interface, 
+                                          gs_interface, 
+                                          gs_pull_interval, 
+                                          gs_read_interval)
         
-        logger.log(self.sensor_properties['name'] + ' UUID: ' + sensor_id)
+#         self.sensor_properties = {'name': gs_name,
+#                                   'sensor_id': sensor_id,
+#                                   'type': gs_type,
+#                                   'pull_interval': gs_pull_interval,
+#                                   'read_fisical_interval': gs_read_fisical_interval
+#                                   }
+        
+        logger.log(self.sensor_model.get_property('name') + ' UUID: ' + sensor_id)
+        #logger.log(self.sensor_properties['name'] + ' UUID: ' + sensor_id)
 
         self.ipc_sensor_catalog = "ipc:///tmp/SensorCatalogService.pipe"
         self.ipc_sensor_pulling = "ipc:///tmp/" + sensor_id + ".pipe"
@@ -86,11 +105,11 @@ class Nors_GenericSensor:
             self.SensorRead = SensorRead
         
     def SensorDataProcessingGeneric(self, sensor_data):
-        logger.log(self.sensor_properties['name'] + ': Fake sensor processed', 'debug')
+        logger.log(self.sensor_model.get_property('name') + ': Fake sensor processed', 'debug')
         return sensor_data
     
     def SensorReadGeneric(self):
-        logger.log(self.sensor_properties['name'] + ': Fake sensor readed', 'debug')
+        logger.log(self.sensor_model.get_property('name') + ': Fake sensor readed', 'debug')
         return random.uniform(-1,1)
     
     def SignIn(self):
@@ -98,7 +117,7 @@ class Nors_GenericSensor:
         SignIn - Register a sensor in SensorService
         '''
         
-        logger.log('Registering sensor: ' + self.sensor_properties['name'], 'debug')
+        logger.log('Registering sensor: ' + self.sensor_model.get_property('name'), 'debug')
         
         # ZeroMQ Context
         context = zmq.Context()
@@ -109,7 +128,7 @@ class Nors_GenericSensor:
         socket.connect(self.ipc_sensor_catalog)
         
         # Send a "message" using the socket
-        socket.send_json(json.dumps(self.sensor_properties))
+        socket.send_json(self.sensor_model.get_sensor_json())
         
         poller = zmq.Poller()
         poller.register(socket, zmq.POLLIN)
@@ -117,15 +136,15 @@ class Nors_GenericSensor:
         if poller.poll(10*1000): # 10s timeout in milliseconds
             result = socket.recv_json()
         else:
-            raise IOError(self.sensor_properties['name'] + ': Timeout processing auth request')
+            raise IOError(self.sensor_model.get_property('name') + ': Timeout processing auth request')
 
         if result['result'] == 'registered':
-            logger.log(self.sensor_properties['name'] + ': Sensor Registered', 'debug')
+            logger.log(self.self.sensor_model.get_property('name') + ': Sensor Registered', 'debug')
             t = Thread(target=self.SensorWork, name='SensorWork', args=(self.q, ))
             t.daemon = True
             t.start()
         else:
-            raise IOError(self.sensor_properties['name'] + ': Sensor NOT Registered')
+            raise IOError(self.sensor_model.get_property('name') + ': Sensor NOT Registered')
 
         # starting thread to respond for sensor data pull requests
         tt = Thread(target=self.SensorPullWork, name='SensorPullWork', args=(self.q, ))
@@ -138,7 +157,7 @@ class Nors_GenericSensor:
         '''
         
         while True:
-            time.sleep(self.sensor_properties['read_fisical_interval'])
+            time.sleep(self.self.sensor_model.get_property('read_interval'))
             sensor_data = self.SensorRead()
             sensor_data_processed = self.SensorDataProcessing(sensor_data)
             self.SensorDataStorage.put(sensor_data_processed)
@@ -164,7 +183,7 @@ class Nors_GenericSensor:
 
     def SensorDataInformation(self, sensor_data):
         sensor_data['date'] = self.getDateTime()
-        sensor_data['sensor_id'] = self.sensor_properties['sensor_id']
+        sensor_data['sensor_id'] = self.sensor_model.get_property('sensor_id')
         return sensor_data 
 
     def getDateTime(self):
