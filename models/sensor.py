@@ -30,7 +30,7 @@ class Sensor():
         
         
         Model = namedtuple('Sensor',
-                            'name sensor_id description interface pull_interval  read_interval stream')
+                            'name sensor_id description interface pull_interval  read_interval stream_info')
         
         self.sensor = Model(name = name,
                             sensor_id = sensor_id,
@@ -38,9 +38,9 @@ class Sensor():
                             interface = sensor_interface,
                             pull_interval = pull_interval,
                             read_interval = read_interval,
-                            stream = [])  
+                            stream_info = [])  
         
-    def add_stream(self,
+    def add_stream_info(self,
                     name, 
                     description,
                     sensor_type=None, 
@@ -60,7 +60,7 @@ class Sensor():
                     upper_threshold_fatal=None,
                     enabled_thresholds=None):
         
-        self.sensor.stream.append({'name': name,
+        self.sensor.stream_info.append({'name': name,
                                    'description': description,
                                    'sensor_type': sensor_type,
                                    'unit': unit,
@@ -81,8 +81,8 @@ class Sensor():
                                    'enabled_thresholds': enabled_thresholds})
         
 
-    def get_stream_num(self):
-        return len(self.sensor.stream)
+    def get_stream_info_num(self):
+        return len(self.sensor.stream_info)
         
     def get_sensor(self):
         return self.sensor._asdict()
@@ -90,18 +90,18 @@ class Sensor():
     def get_sensor_json(self, indentation=None):
         return json.dumps(self.get_sensor(), encoding='UTF-8', cls=EnumEncoder, indent=indentation)
     
-    def get_property(self, property):
-        return self.get_sensor()[property]
+    def get_sensor_property(self, sensor_property):
+        return self.get_sensor()[sensor_property]
         
-    def get_stream_property(self, stream_name, property):
-        for item in self.get_sensor()['stream']:
-            if item['name'] is stream_name:
-                return item[property]
+    def get_stream_info_property(self, stream_info_name, stream_property):
+        for item in self.get_sensor()['stream_info']:
+            if item['name'] is stream_info_name:
+                return item[stream_property]
         return None
     
-    def set_stream_property(self, stream_name, property, value):
-        for item in self.get_sensor()['stream']:
-            if item['name'] is stream_name:
-                item['property'] = value
+    def set_stream_info_property(self, stream_info_name, stream_property, value):
+        for item in self.get_sensor()['stream_info']:
+            if item['name'] is stream_info_name:
+                item['stream_property'] = value
                 return True
         return False

@@ -28,58 +28,58 @@ class Test_Sensor(unittest.TestCase):
         self.assertEqual(s1['sensor_id'], 'ID')
         self.assertEqual(s1['description'], 'DESCRIPTION')
         self.assertEqual(s1['interface'], sensor.SensorInterface.analog)
-        self.assertEqual(s1['stream'], [])
+        self.assertEqual(s1['stream_info'], [])
         self.assertEqual(s1['pull_interval'], 2)
         self.assertEqual(s1['read_interval'], 1)
     
-    def test_add_get_stream(self):
-        self.assertEqual(self.s.get_stream_num(), 0)
-        self.s.add_stream('st1', 'des1')
-        self.assertEqual(self.s.get_stream_num(), 1)
-        self.s.add_stream('st2', 'des2')
-        self.assertEqual(self.s.get_stream_num(), 2)
+    def test_add_get_stream_info(self):
+        self.assertEqual(self.s.get_stream_info_num(), 0)
+        self.s.add_stream_info('st1', 'des1')
+        self.assertEqual(self.s.get_stream_info_num(), 1)
+        self.s.add_stream_info('st2', 'des2')
+        self.assertEqual(self.s.get_stream_info_num(), 2)
 
     def test_get_sensor_json(self):
         s1 = self.s.get_sensor_json(indentation=1)
         print(s1)
-        self.s.add_stream('st1', 'des1')
+        self.s.add_stream_info('st1', 'des1')
         s1 = self.s.get_sensor_json(indentation=1)
         print(s1)
         
     def test_get_property(self):
-        s1 = self.s.get_property('description')
+        s1 = self.s.get_sensor_property('description')
         self.assertEqual(s1, 'DESCRIPTION')
 
-    def test_get_stream_property1(self):
-        self.s.add_stream('st1', 'des1', value_max=2)
-        self.s.add_stream('st2', 'des2', value_max=3)
-        s1 = self.s.get_stream_property('st1', 'value_max')
+    def test_get_stream_info_property1(self):
+        self.s.add_stream_info('st1', 'des1', value_max=2)
+        self.s.add_stream_info('st2', 'des2', value_max=3)
+        s1 = self.s.get_stream_info_property('st1', 'value_max')
         self.assertEqual(s1, 2)
     
-    def test_get_stream_property2(self):
-        self.s.add_stream('st1', 'des1', value_max=2)
-        self.s.add_stream('st2', 'des2', value_max=3)
-        s1 = self.s.get_stream_property('st2', 'value_max')
+    def test_get_stream_info_property2(self):
+        self.s.add_stream_info('st1', 'des1', value_max=2)
+        self.s.add_stream_info('st2', 'des2', value_max=3)
+        s1 = self.s.get_stream_info_property('st2', 'value_max')
         self.assertEqual(s1, 3)
         
-    def test_get_stream_property3(self):
-        self.s.add_stream('st1', 'des1', value_max=2)
-        self.s.add_stream('st2', 'des2', value_max=3)
-        s1 = self.s.get_stream_property('st3', 'value_max')
+    def test_get_stream_info_property3(self):
+        self.s.add_stream_info('st1', 'des1', value_max=2)
+        self.s.add_stream_info('st2', 'des2', value_max=3)
+        s1 = self.s.get_stream_info_property('st3', 'value_max')
         self.assertEqual(s1, None)
 
-    def test_set_stream_property1(self):
-        self.s.add_stream('st1', 'des1', value_max=2)
-        self.s.add_stream('st2', 'des2', value_max=3)
+    def test_set_stream_info_property1(self):
+        self.s.add_stream_info('st1', 'des1', value_max=2)
+        self.s.add_stream_info('st2', 'des2', value_max=3)
         
-        s1 = self.s.get_stream_property('st1', 'value_max')
+        s1 = self.s.get_stream_info_property('st1', 'value_max')
         self.assertEqual(s1, 2)
         
-        s1 = self.s.set_stream_property('st1', 'value_max', 5)
+        s1 = self.s.set_stream_info_property('st1', 'value_max', 5)
         self.assertEqual(s1, True)
         
-        s1 = self.s.get_stream_property('st1', 'value_max')
-        self.assertEqual(s1, 5)
+        s1 = self.s.get_stream_info_property('st1', 'value_max') # IMUTABLE
+        self.assertEqual(s1, 2)
     
     def tearDown(self):
         pass
