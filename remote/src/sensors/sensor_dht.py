@@ -22,7 +22,7 @@ from genericsensor.genericsensor import Nors_GenericSensor
 
 from grovepi import *
 
-class RealSensor():
+class RealSensor(Nors_GenericSensor):
     def __init__(self):
         
         self.sensor_name = 'DHT'
@@ -31,9 +31,7 @@ class RealSensor():
                  gs_description = 'DHT Humidity and Temperature', 
                  gs_interface = None,
                  gs_pull_interval = 5, 
-                 gs_read_interval = 4,
-                 SensorRead = self.SensorRead, 
-                 SensorDataProcessing = self.SensorDataProcessing)
+                 gs_read_interval = 4)
 
         sensor.SignIn()
         

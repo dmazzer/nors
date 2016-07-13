@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-
 """ 
 genericsensor.py: Generic Sensor representation and registration application
 
@@ -20,7 +18,6 @@ import Queue
 import time
 from uuid import uuid1
 import json
-import signal
 import random
 
 sys.path.append('../')
@@ -58,10 +55,7 @@ class Nors_GenericSensor:
                  gs_description = 'fake generic sensor', 
                  gs_interface = SensorModel.SensorInterface.virtual,
                  gs_pull_interval = 5, 
-                 gs_read_interval = 1,
-                 SensorRead = 'none', 
-                 SensorDataProcessing = 'none'):
-        #self.logger = logger.Logger()
+                 gs_read_interval = 1):
 
         logger.log('GenericSensor started', 'debug')
         
@@ -86,21 +80,11 @@ class Nors_GenericSensor:
         self.ipc_sensor_catalog = "ipc:///tmp/SensorCatalogService.pipe"
         self.ipc_sensor_pulling = "ipc:///tmp/" + sensor_id + ".pipe"
 
-        if SensorDataProcessing == 'none':
-            self.SensorDataProcessing = self.SensorDataProcessingGeneric
-        else:
-            self.SensorDataProcessing = SensorDataProcessing
-         
-        if SensorRead == 'none':
-            self.SensorRead = self.SensorReadGeneric
-        else:
-            self.SensorRead = SensorRead
-        
-    def SensorDataProcessingGeneric(self, sensor_data):
+    def SensorDataProcessing(self, sensor_data):
         logger.log(self.sensor_model.get_property('name') + ': Fake sensor processed', 'debug')
         return sensor_data
     
-    def SensorReadGeneric(self):
+    def SensorRead(self):
         logger.log(self.sensor_model.get_property('name') + ': Fake sensor readed', 'debug')
         return random.uniform(-1,1)
     
@@ -180,20 +164,4 @@ class Nors_GenericSensor:
 
     def getDateTime(self):
         return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-    
-
-if __name__ == '__main__':
-    
-    logger.log("GenericSensor started by command line", 'info')
-    sensor = Nors_GenericSensor()
-    sensor.SignIn()
-
-    def do_exit(sig, stack):
-        raise SystemExit('Exiting')
-    
-    signal.signal(signal.SIGINT, do_exit)
-    signal.signal(signal.SIGUSR1, do_exit)
-    
-    signal.pause()    
-
     
