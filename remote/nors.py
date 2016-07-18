@@ -34,6 +34,8 @@ def load_configuration():
     client_auth = config.ReadConfig('client', 'auth')
     client_id = config.ReadConfig('client', 'id')
     
+    # The following code generate de client_id if its does not exist
+    # in config file.  
     if client_id == None:
         client_id = str(uuid1())
         logger.log('Generating UUID: ' + client_id, level='info')

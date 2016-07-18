@@ -25,6 +25,7 @@ from norsutils.logmsgs.logger import Logger
 logger = Logger('debug')
 
 from connect import Nors_Connect
+from models.remote import Remote
 
 logger.log("NORS Client started", 'debug')
 
@@ -34,12 +35,14 @@ class Nors_Client():
         self.config = config;
         self.load_configuration()
         
+        client_information = Remote(self.client_id, self.client_name, self.client_description, self.client_location)
+        
         self.conn = Nors_Connect(self.server_ip, 
                             self.server_port, 
                             self.server_api_path, 
                             self.server_token_path, 
-                            self.client_auth, 
-                            self.client_id)
+                            self.client_auth,
+                            client_information)
     
     
     def load_configuration(self):
@@ -50,6 +53,9 @@ class Nors_Client():
         
         self.client_id = self.config.ReadConfig('client', 'id')
         self.client_auth = self.config.ReadConfig('client', 'auth')
+        self.client_name = self.config.ReadConfig('client', 'nickname')
+        self.client_description = self.config.ReadConfig('client', 'description')
+        self.client_location = self.config.ReadConfig('client', 'location')
 
         
         

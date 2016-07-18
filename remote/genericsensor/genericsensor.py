@@ -30,7 +30,11 @@ from models import sensor as SensorModel
 class Nors_GenericSensorStorage(object):
     '''
     GenericSensorStorage class.
-    This class is a simple implementation that may evolve to more elaborated sensor data storage
+    
+    This class is a simple implementation that may evolve to more elaborated 
+    sensor data storage through overriding put and get methods.
+    This cass may be used to store data in the context of the sensor class,
+    before the data be stored locally in the database. 
     '''
     
     def __init__(self):
@@ -52,7 +56,7 @@ class Nors_GenericSensor(object):
     def __init__(self, 
                  gs_name = 'Generic Sensor', 
                  gs_id = '', 
-                 gs_description = 'fake generic sensor', 
+                 gs_description = 'generic sensor', 
                  gs_interface = SensorModel.SensorInterface.virtual,
                  gs_pull_interval = 5, 
                  gs_read_interval = 1):
@@ -83,11 +87,11 @@ class Nors_GenericSensor(object):
         self.SignIn()
 
     def SensorDataProcessing(self, sensor_data):
-        logger.log(self.sensor_model.get_sensor_property('name') + ': Fake sensor processed', 'debug')
+        logger.log(self.sensor_model.get_sensor_property('name') + ': Default sensor data processing', 'debug')
         return sensor_data
     
     def SensorRead(self):
-        logger.log(self.sensor_model.get_sensor_property('name') + ': Fake sensor readed', 'debug')
+        logger.log(self.sensor_model.get_sensor_property('name') + ': Default sensor data read', 'debug')
         return random.uniform(-1,1)
     
     def SignIn(self):

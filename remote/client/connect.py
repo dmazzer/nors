@@ -22,8 +22,8 @@ class Nors_Connect():
                  server_port, 
                  server_api_path, 
                  server_token_path, 
-                 client_auth, 
-                 client_id):
+                 client_auth,
+                 client_information):
         
         
         self.server_ip = server_ip
@@ -31,7 +31,7 @@ class Nors_Connect():
         self.server_api_path = server_api_path
         self.server_token_path = server_token_path  
         self.client_auth = client_auth 
-        self.client_id = client_id
+        self.client_id = client_information.get_remote_property('remote_id')
 
         self.server_address = 'http://' + server_ip + ':' + server_port + server_api_path 
         
