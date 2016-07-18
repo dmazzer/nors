@@ -41,6 +41,6 @@ RUN git checkout develop
 WORKDIR $HOME/app/nors/server/src
 RUN sudo pip3 install -r requirements.txt
 
-CMD bash
+CMD ./run.py -c nors.conf
 
 

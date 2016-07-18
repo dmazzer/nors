@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """ 
-run.py: NORS Server application
+nors_srv.py: NORS Server application
 
 """
 
