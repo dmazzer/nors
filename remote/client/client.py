@@ -16,15 +16,17 @@ __email__ = "dmazzer@gmail.com"
     # coletar dado do db local e enviar para o servidor
     # receber notificacao do servidor
 
-import requests
-import json
+# import requests
+# import json
 import sys
 
-sys.path.append('../')
+# sys.path.append('../')
 from norsutils.logmsgs.logger import Logger
 logger = Logger('debug')
 
 from connect import Nors_Connect
+
+sys.path.append('../../')
 from models.remote import Remote
 
 logger.log("NORS Client started", 'debug')
@@ -56,4 +58,4 @@ class Nors_Client():
         self.client_name = self.config.ReadConfig('client', 'nickname')
         self.client_description = self.config.ReadConfig('client', 'description')
         self.client_location = self.config.ReadConfig('client', 'location')
-    
+
