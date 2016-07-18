@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """ 
-run.py: Server application
+run.py: NORS Server application
 
 """
 
@@ -16,6 +16,8 @@ import os
 from app import create_app, db
 from app.models import User
 
+from config.config import Nors_Configuration
+
 if __name__ == '__main__':
     app = create_app(os.environ.get('FLASK_CONFIG', 'production'))
     with app.app_context():
@@ -24,5 +26,11 @@ if __name__ == '__main__':
             u = User(username = 'admin')
             u.set_password('admin')
             u.save()
+
+    # reading configurations from config file
+    config = Nors_Configuration()
+    server_ip = config.ReadConfig('server', 'ip')
+    server_port = int(config.ReadConfig('server', 'port'))
+    
     app.debug = True
-    app.run()
+    app.run(host=server_ip, port=server_port)

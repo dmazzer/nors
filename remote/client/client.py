@@ -59,4 +59,3 @@ class Nors_Client():
         self.client_description = self.config.ReadConfig('client', 'description')
         self.client_location = self.config.ReadConfig('client', 'location')
 
-    
