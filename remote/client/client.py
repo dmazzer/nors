@@ -56,22 +56,4 @@ class Nors_Client():
         self.client_name = self.config.ReadConfig('client', 'nickname')
         self.client_description = self.config.ReadConfig('client', 'description')
         self.client_location = self.config.ReadConfig('client', 'location')
-
-        
-        
-
-# r = requests.get('http://httpbin.org/ip')
-# print r.text
-# 
-# print '-----'
-# r = requests.get('http://127.0.0.1:8080/v1/clients?limit=1')
-# print r.text
-# print r.headers
-# 
-# print '-----'
-# 
-# data = json.dumps({'sensor_data':"{'test':'q'}"}) 
-# headers = {'content-type': 'application/json'}
-# r = requests.post('http://127.0.0.1:8080/v1/clients/client1', data, headers=headers)
-# print r.text
     

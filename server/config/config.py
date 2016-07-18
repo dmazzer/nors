@@ -10,7 +10,8 @@ __license__ = "MIT"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
 
-import ConfigParser
+from configparser import ConfigParser
+from configparser import RawConfigParser
 from optparse import OptionParser
 from norsutils.logmsgs.logger import Logger
 
@@ -38,7 +39,7 @@ class Nors_Configuration:
         try:
             
             # ConfigParser initialization and configuration file read
-            config = ConfigParser.RawConfigParser()
+            config = RawConfigParser()
             config.read(config_filename)
             return config
             
