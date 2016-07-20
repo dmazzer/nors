@@ -38,6 +38,10 @@ class Nors_LocalStorage():
     def store(self, data_to_insert):
         result = self.local_dao.insert(self.local_db_collection_name, data_to_insert)
         return result 
+
+    def get_first(self):
+        result = self.local_dao.get_first_n_itens(self.local_db_collection_name, 1)
+        return result
     
     def __transfer_to_external_db(self):
         pass

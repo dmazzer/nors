@@ -35,16 +35,17 @@ class Nors_Connect():
 
         self.server_address = 'http://' + server_ip + ':' + server_port + server_api_path 
         
+    def check_connection(self):
+        
         logger.log('Sending GET command to server:', 'debug')
         headers = {'content-type': 'application/json'}
         
-        request_string = 'http://' +server_ip+':'+server_port+'/server-info'
-        logger.log('Request String: ' + request_string, 'debug')
-        r = requests.get(request_string, headers=headers)
-        logger.log('Response:', 'debug')
-        logger.log(r.text, 'debug')
-        logger.log('Headers:', 'debug')
-        logger.log(r.headers, 'debug')
+        rv, rt = self.get_resource('/server-info/')
+        if rv == 200:
+            return True
+        else:
+            return False
+    
     
     def get_token(self):
         logger.log('----------------------------------------------------------', 'debug')

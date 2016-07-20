@@ -50,16 +50,40 @@ class Nors_LocalStorage_DAO:
         Returns numberOfItems items from the database, if available data is less than numberOfItems, no data is returned. 
         '''
         searchd = {"date": {"$gt":str(startDate)}}
-        return self.find(CollectionName, searchd, numberOfItems)
-        
-    def find(self, CollectionName, SearchString, SearchLimit=None):
-        collection = self.db_client[str(CollectionName)]
-        if SearchLimit is not None:
-            collected = collection.find(SearchString).limit(SearchLimit)
-        else:
-            collected = collection.find(SearchString)
-        return collected
+        return self.find(CollectionName, SearchString=searchd, SearchLimit=numberOfItems)
 
+    def get_first_n_itens(self, CollectionName, numberOfItems):
+        '''
+        Returns numberOfItems items from the database, if available data is less than numberOfItems, no data is returned. 
+        '''
+        return self.find(CollectionName, SearchLimit=numberOfItems, Sort=[('_id', pymongo.ASCENDING), ])
+        
+    def find(self, CollectionName, SearchString=None, SearchLimit=0, Sort=None):
+        
+        if (Sort is None) and (SearchString is not None):
+            return self._find_string(CollectionName, SearchString, SearchLimit)
+        
+        elif (Sort is not None) and (SearchString is None):
+            return self._find_with_sort_without_string(CollectionName, SearchLimit, Sort)
+        
+        else:
+            return False
+    
+    def _find_with_sort_without_string(self, CollectionName, SearchLimit, Sort=None):
+        collection = self.db_client[str(CollectionName)]
+        collected = collection.find().limit(SearchLimit).sort(Sort)
+        r = []
+        for i in collected:
+            r.append(i)
+        return r
+
+    def _find_string(self, CollectionName, SearchString, SearchLimit):
+        collection = self.db_client[str(CollectionName)]
+        collected = collection.find(SearchString).limit(SearchLimit)
+        r = []
+        for i in collected:
+            r.append(i)
+        return r
     
     def dropCollection(self, CollectionName):
         collection = self.db_client[str(CollectionName)]
