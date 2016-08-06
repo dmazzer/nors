@@ -18,6 +18,7 @@ from norsutils.logmsgs.logger import Logger
 
 from pymongo import MongoClient
 import pymongo
+from bson.objectid import ObjectId
 
 logger = Logger()
 
@@ -57,7 +58,13 @@ class Nors_LocalStorage_DAO:
         Returns numberOfItems items from the database, if available data is less than numberOfItems, no data is returned. 
         '''
         return self.find(CollectionName, SearchLimit=numberOfItems, Sort=[('_id', pymongo.ASCENDING), ])
-        
+
+    def get_item_by_id(self, CollectionName, item_id):
+        '''
+        Returns item from the database with id=item_id. 
+        '''
+        return self.find(CollectionName, SearchString={"_id": ObjectId(item_id)}, SearchLimit=1)
+    
     def find(self, CollectionName, SearchString=None, SearchLimit=0, Sort=None):
         
         if (Sort is None) and (SearchString is not None):

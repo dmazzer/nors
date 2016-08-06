@@ -30,8 +30,9 @@ from connect import Nors_Connect
 sys.path.append('../')
 sys.path.append('../../')
 from models.remote import Remote
+from models.stream import Stream
 
-logger.log("NORS Client started", 'debug')
+logger.log("NORS Client started", 'info')
 
 class Nors_Client():
     def __init__(self, config, local_storage, autoinit_check_for_local_data=True):
@@ -63,9 +64,9 @@ class Nors_Client():
                             self.client_auth,
                             client_information)
 
-        if self.conn.check_connection() is True:
-            #precisa???
-            pass
+#         if self.conn.check_connection() is True:
+#             #precisa???
+#             pass
 
         # Usually the ckeck_for_local_data should always run at class init,
         # this verification is done to allow a way to test _update_remote 
@@ -87,11 +88,36 @@ class Nors_Client():
     
     def _update_local(self):
         pass
+
+    def _remove_id(d, key='_id'):
+        r = dict(d)
+        del r[key]
+        return r
     
     def _update_remote(self):
         logger.log('updating server', 'debug')
-        self.local_storage
-        pass
+        data_to_send = self.local_storage.get_first()
+        if data_to_send is not None:
+            data_id = data_to_send[0]['_id']
+            data_to_send[0].pop('_id')
+            logger.log('Sending id: ' + str(data_id), 'debug')
+            rv, r = self.conn.post_resource('/sensors/', data_to_send[0])
+            print rv
+            print r
+            
+          
+#         data = json.dumps({"name":"p3", "idd":"1000"})
+#         rv, r = self.c.conn.post_resource('/sensors/', data)
+# #         r = self.c.conn.get_resource('/sensors/1')
+          
+            
+#         findresult = self.storage.get_first_n_itens('TestCollection', 1)
+#         test_id = findresult[0]['_id']
+#         print test_id
+#         findresult = self.storage.get_item_by_id('TestCollection', test_id)
+#         print findresult
+#         self.assertEqual(self.test_data1, findresult[0])
+#         pass
     
     def _pop_sensor_data(self):
         pass

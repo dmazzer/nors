@@ -14,7 +14,7 @@ from collections import namedtuple
 from enum import Enum
 import json
 
-from .utils import EnumEncoder
+from utils import EnumEncoder
 
 class Remote():
     '''
