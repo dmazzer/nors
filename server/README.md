@@ -14,7 +14,7 @@ $ source venv/bin/activate
 On server project folder:
 
 $ docker build --rm -t nors .
-$ docker run -ti --rm nors
+$ docker run -ti -P --rm nors
 
 
 
