@@ -89,7 +89,7 @@ class Nors_Client():
     def _update_local(self):
         pass
 
-    def _remove_id(d, key='_id'):
+    def _remove_id(self, d, key='_id'):
         r = dict(d)
         del r[key]
         return r
