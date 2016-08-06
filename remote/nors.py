@@ -14,7 +14,7 @@ __email__ = "dmazzer@gmail.com"
 
 from sensorservice.sensorservice import Nors_SensorService
 from localstorage.localstorage import Nors_LocalStorage
-from remote.client.client import Nors_Client
+from client.client import Nors_Client
 from config.config import Nors_Configuration
 from norsutils.logmsgs.logger import Logger
 

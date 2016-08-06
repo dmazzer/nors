@@ -23,7 +23,7 @@ import signal
 class Nors_SensorService:
     def __init__(self, LocalStorage_class):
         
-        logger.log('SensorService started')
+        logger.log('SensorService started', 'info')
         
         self.q = Queue.Queue()
         self.ipc_sensor_catalog = "ipc:///tmp/SensorCatalogService.pipe"
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     
     sys.path.append('../')
     from norsutils.logmsgs.logger import Logger
-    logger = Logger()
+    logger = Logger('debug')
     logger.log("SensorService started by command line")
     sensor_service = Nors_SensorService()
 
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 else:
     sys.path.append('../')
     from norsutils.logmsgs.logger import Logger
-    logger = Logger()
+    logger = Logger('debug')
 
 
 
