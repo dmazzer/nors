@@ -101,29 +101,28 @@ class Stream(db.Document):
 #     name = db.Column(db.String(64), index=True)
 #     items = db.relationship('Item', backref='sensor', lazy='dynamic')
     created_at = db.DateTimeField(default=datetime.now(), required=True)
-    iid = db.StringField(max_length=255, required=True, unique=True)
-    name = db.StringField(max_length=255, required=True)
-    items = db.DecimalField()
+    sensor_id = db.StringField(max_length=255, required=True)
+    sensor_data = db.DictField()
     
     def __repr__(self):
         return '<Stream %r>' % self.idd    
     
     def get_url(self):
-        return url_for('api.get_stream', idd=str(self.idd), _external=True)
+        return url_for('api.get_stream', idd=str(self.sensor_id), _external=True)
  
     def export_data(self):
         return {
             'self_url': self.get_url(),
-            'name': self.name,
-            'idd': self.idd
+            'sensor_id': self.sensor_id,
+            'sensor_data':self.sensor_data,
         }
  
     def import_data(self, data):
         try:
-            self.name = data['name']
-            self.idd = data['idd']
+            self.sensor_id = data['sensor_id']
+            self.sensor_data = data['sensor_data']
         except KeyError as e:
-            raise ValidationError('Invalid sensor: missing ' + e.args[0])
+            raise ValidationError('Invalid stream: missing ' + e.args[0])
         return self
 
 
