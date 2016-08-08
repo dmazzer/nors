@@ -21,11 +21,16 @@ import json
 import signal
 
 class Nors_SensorService:
-    def __init__(self, LocalStorage_class):
+    def __init__(self, pull_sensors_interval, LocalStorage_class):
+        '''
+        :param pull_sensors_interval: Time in seconds that registered sensors are pulled
+        :param LocalStorage_class: LocalStorage object
+        '''
         
-        logger.log('SensorService started')
+        logger.log('SensorService started', 'info')
         
         self.q = Queue.Queue()
+        self.pull_sensors_interval = pull_sensors_interval
         self.ipc_sensor_catalog = "ipc:///tmp/SensorCatalogService.pipe"
 
         self.SensorCatalog()
@@ -95,9 +100,9 @@ class Nors_SensorService:
                     
                 else:
                     logger.log('Timeout sensor data request ' + sensor['name'] + ' ' + sensor['sensor_id'])
-                time.sleep(1)
+                #time.sleep(0.1) # delay between sensor_read, not really needed
 
-            time.sleep(5)
+            time.sleep(self.pull_sensors_interval)
         
     def SensorCatalogWork(self, q):
         # ZeroMQ Context
@@ -134,7 +139,7 @@ if __name__ == '__main__':
     
     sys.path.append('../')
     from norsutils.logmsgs.logger import Logger
-    logger = Logger()
+    logger = Logger('debug')
     logger.log("SensorService started by command line")
     sensor_service = Nors_SensorService()
 
@@ -149,7 +154,7 @@ if __name__ == '__main__':
 else:
     sys.path.append('../')
     from norsutils.logmsgs.logger import Logger
-    logger = Logger()
+    logger = Logger('debug')
 
 
 

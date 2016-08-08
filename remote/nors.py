@@ -14,7 +14,7 @@ __email__ = "dmazzer@gmail.com"
 
 from sensorservice.sensorservice import Nors_SensorService
 from localstorage.localstorage import Nors_LocalStorage
-from remote.client.client import Nors_Client
+from client.client import Nors_Client
 from config.config import Nors_Configuration
 from norsutils.logmsgs.logger import Logger
 
@@ -59,8 +59,8 @@ if __name__ == '__main__':
     config = load_configuration()
     
     # Initialize local services
-    local_storage = Nors_LocalStorage(config, CollectionName='nors_local_storage')
-    sensor_service = Nors_SensorService(local_storage)
+    local_storage = Nors_LocalStorage(config)
+    sensor_service = Nors_SensorService(5, local_storage)
     client_service = Nors_Client(config, local_storage)
     
 #     sensor_generic1 = Nors_GenericSensor(gs_name='fake1', gs_pull_interval=2, gs_read_fisical_interval=1)

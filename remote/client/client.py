@@ -30,8 +30,9 @@ from connect import Nors_Connect
 sys.path.append('../')
 sys.path.append('../../')
 from models.remote import Remote
+from models.stream import Stream
 
-logger.log("NORS Client started", 'debug')
+logger.log("NORS Client started", 'info')
 
 class Nors_Client():
     def __init__(self, config, local_storage, autoinit_check_for_local_data=True):
@@ -63,9 +64,9 @@ class Nors_Client():
                             self.client_auth,
                             client_information)
 
-        if self.conn.check_connection() is True:
-            #precisa???
-            pass
+#         if self.conn.check_connection() is True:
+#             #precisa???
+#             pass
 
         # Usually the ckeck_for_local_data should always run at class init,
         # this verification is done to allow a way to test _update_remote 
@@ -87,12 +88,28 @@ class Nors_Client():
     
     def _update_local(self):
         pass
-    
+
+    def _remove_id(self, d, key='_id'):
+        r = dict(d)
+        del r[key]
+        return r
+
     def _update_remote(self):
         logger.log('updating server', 'debug')
-        self.local_storage
-        pass
-    
+        data_to_send = self.local_storage.get_first()
+        if len(data_to_send) > 0:
+            data_id = data_to_send[0]['_id']
+            data_to_send[0].pop('_id')
+            logger.log('Sending id: ' + str(data_id), 'debug')
+            rv, r = self.conn.post_resource('/streams/', data_to_send[0])
+            
+            if rv == 201:
+                result = self.local_storage.delete(data_id)
+                if result == 0:
+                    logger.log('Item not found on database', 'debug')
+                else:
+                    logger.log('Item deleted from database', 'debug')
+                    
     def _pop_sensor_data(self):
         pass
     

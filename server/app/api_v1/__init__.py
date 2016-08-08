@@ -22,4 +22,4 @@ def before_request():
 #     return rv
 
 
-from . import errors, sensors, remotes #customers, products, orders, items, 
+from . import errors, sensors, remotes, streams #customers, products, orders, items, 

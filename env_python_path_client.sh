@@ -1,1 +1,1 @@
-export PYTHONPATH=/home/mazzer/work/nors/remote/:/home/mazzer/work/nors/models/:/home/mazzer/work/nors/server:/home/mazzer/work/nors/
+export PYTHONPATH=/home/mazzer/nors/remote/:/home/mazzer/nors/models/:/home/mazzer/nors/server:/home/mazzer/nors/

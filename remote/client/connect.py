@@ -15,7 +15,7 @@ import json
 import requests
 
 from norsutils.logmsgs.logger import Logger
-logger = Logger('debug')
+logger = Logger()
 
 class Nors_Connect():
     def __init__(self, server_ip, 
@@ -56,16 +56,19 @@ class Nors_Connect():
         logger.log('Request String: ' + request_string, 'debug')
         logger.log('Data String: ' + str(data), 'debug')
         
-        r = requests.post(request_string, 
+        try:
+            r = requests.post(request_string, 
                          headers={'content-type': 'application/json'},
                          data=json.dumps(data)
                          )
-        
-        logger.log(r.text, 'debug')
-        logger.log(r.headers, 'debug')
-        
-        if r.status_code == 200:
-            return r.json()["access_token"]
+        except requests.exceptions.RequestException as e:
+            logger.log('Error connection to Server: ' + str(e), 'error')
+            return None
+        else:
+            logger.log(r.text, 'debug')
+            logger.log(r.headers, 'debug')
+            if r.status_code == 200:
+                return r.json()["access_token"]
         
     #@staticmethod
     def _token_manager(self, renew=False):
@@ -93,22 +96,27 @@ class Nors_Connect():
         request_string = self.server_address + str(resource)
         logger.log('Request String: ' + request_string, 'debug')
         
-        r = requests.get(request_string, headers=headers)
-
-        logger.log('Response:', 'debug')
-        logger.log(r.text, 'debug')
-        logger.log('Headers:', 'debug')
-        logger.log(r.headers, 'debug')
-        logger.log('Return Code:', 'debug')
-        logger.log(r.status_code, 'debug')
-    
-        if r.status_code == 200:
-            if r.headers.get('content-type') == 'application/json':
-                return r.status_code, r.json()
-            else:
-                return r.status_code, r.text
+        try:
+            r = requests.get(request_string, headers=headers)
+        except requests.exceptions.RequestException as e:
+            logger.log('Error connection to Server: ' + str(e), 'error')
+            return requests.Response.raise_for_status() , None
         else:
-            return r.status_code, None
+            logger.log('Response:', 'debug')
+            logger.log(r.text, 'debug')
+            logger.log('Headers:', 'debug')
+            logger.log(r.headers, 'debug')
+            logger.log('Return Code:', 'debug')
+            logger.log(r.status_code, 'debug')
+        
+            if r.status_code == 200:
+                if r.headers.get('content-type') == 'application/json':
+                    return r.status_code, r.json()
+                else:
+                    return r.status_code, r.text
+            else:
+                return r.status_code, None
+            
         
     def _post_resource(self, resource, token, data_json, headers={}):
         logger.log('----------------------------------------------------------', 'debug')
@@ -125,28 +133,37 @@ class Nors_Connect():
         request_string = self.server_address + str(resource)
         logger.log('Request String: ' + request_string, 'debug')
         
-        r = requests.post(request_string, data=data_json, headers=headers)
-
-        logger.log('Response:', 'debug')
-        logger.log(r.text, 'debug')
-        logger.log('Headers:', 'debug')
-        logger.log(r.headers, 'debug')
-        logger.log('Return Code:', 'debug')
-        logger.log(r.status_code, 'debug')
-   
-        if r.status_code == 200:
-            if r.headers.get('content-type') == 'application/json':
-                return r.status_code, r.json()
-            else:
-                return r.status_code, r.text
+        try:
+            r = requests.post(request_string, data=data_json, headers=headers)
+        except requests.exceptions.RequestException as e:
+            logger.log('Error connection to Server: ' + str(e), 'error')
+            return requests.Response.raise_for_status() , None
         else:
-            return r.status_code, None
-        
+            logger.log('Response:', 'debug')
+            logger.log(r.text, 'debug')
+            logger.log('Headers:', 'debug')
+            logger.log(r.headers, 'debug')
+            logger.log('Return Code:', 'debug')
+            logger.log(r.status_code, 'debug')
+       
+            if r.status_code == 200:
+                if r.headers.get('content-type') == 'application/json':
+                    return r.status_code, r.json()
+                else:
+                    return r.status_code, r.text
+            else:
+                return r.status_code, None
+            
+
+           
         
     def get_resource(self, resource, data=None):
         # TODO: If the return is 40x because an expired token, this should trigger a new token request
         t = token=self._token_manager(renew=True)
-        return self._get_resource(resource, data=None, token=t)
+        if t is not None:
+            return self._get_resource(resource, data=None, token=t)
+        else:
+            return None, None
     
     def post_resource(self, resource, data):
         if type(data) is dict:
@@ -156,7 +173,10 @@ class Nors_Connect():
             data_json = data
             
         t = token=self._token_manager(renew=True)
-        return self._post_resource(resource, t, data_json)
+        if t is not None:
+            return self._post_resource(resource, t, data_json)
+        else:
+            return None, None
     
     
         
