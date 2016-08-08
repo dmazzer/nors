@@ -97,7 +97,7 @@ class Nors_Client():
     def _update_remote(self):
         logger.log('updating server', 'debug')
         data_to_send = self.local_storage.get_first()
-        if data_to_send is not None:
+        if len(data_to_send) > 0:
             data_id = data_to_send[0]['_id']
             data_to_send[0].pop('_id')
             logger.log('Sending id: ' + str(data_id), 'debug')
@@ -110,9 +110,6 @@ class Nors_Client():
                 else:
                     logger.log('Item deleted from database', 'debug')
                     
-            #TODO: If rv is 201, delete de data_id entry on local DB
-            
-    
     def _pop_sensor_data(self):
         pass
     
