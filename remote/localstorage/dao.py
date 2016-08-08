@@ -92,6 +92,11 @@ class Nors_LocalStorage_DAO:
             r.append(i)
         return r
     
+    def delete_by_id(self, CollectionName, item_id):
+        collection = self.db_client[str(CollectionName)]
+        result = collection.delete_one({'_id': ObjectId(item_id)})
+        return result.deleted_count
+    
     def dropCollection(self, CollectionName):
         collection = self.db_client[str(CollectionName)]
         collection.drop()

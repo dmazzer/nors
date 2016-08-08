@@ -93,7 +93,7 @@ class Nors_Client():
         r = dict(d)
         del r[key]
         return r
-    
+
     def _update_remote(self):
         logger.log('updating server', 'debug')
         data_to_send = self.local_storage.get_first()
@@ -101,23 +101,17 @@ class Nors_Client():
             data_id = data_to_send[0]['_id']
             data_to_send[0].pop('_id')
             logger.log('Sending id: ' + str(data_id), 'debug')
-            rv, r = self.conn.post_resource('/sensors/', data_to_send[0])
-            print rv
-            print r
+            rv, r = self.conn.post_resource('/streams/', data_to_send[0])
             
-          
-#         data = json.dumps({"name":"p3", "idd":"1000"})
-#         rv, r = self.c.conn.post_resource('/sensors/', data)
-# #         r = self.c.conn.get_resource('/sensors/1')
-          
+            if rv == 201:
+                result = self.local_storage.delete(data_id)
+                if result == 0:
+                    logger.log('Item not found on database', 'debug')
+                else:
+                    logger.log('Item deleted from database', 'debug')
+                    
+            #TODO: If rv is 201, delete de data_id entry on local DB
             
-#         findresult = self.storage.get_first_n_itens('TestCollection', 1)
-#         test_id = findresult[0]['_id']
-#         print test_id
-#         findresult = self.storage.get_item_by_id('TestCollection', test_id)
-#         print findresult
-#         self.assertEqual(self.test_data1, findresult[0])
-#         pass
     
     def _pop_sensor_data(self):
         pass

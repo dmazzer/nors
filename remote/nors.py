@@ -59,8 +59,8 @@ if __name__ == '__main__':
     config = load_configuration()
     
     # Initialize local services
-    local_storage = Nors_LocalStorage(config, CollectionName='nors_local_storage')
-    sensor_service = Nors_SensorService(local_storage)
+    local_storage = Nors_LocalStorage(config)
+    sensor_service = Nors_SensorService(5, local_storage)
     client_service = Nors_Client(config, local_storage)
     
 #     sensor_generic1 = Nors_GenericSensor(gs_name='fake1', gs_pull_interval=2, gs_read_fisical_interval=1)

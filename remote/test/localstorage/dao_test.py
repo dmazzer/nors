@@ -68,9 +68,9 @@ class Nors_LocalStorage_DAO_Test(unittest.TestCase):
     def test_db_id(self):
         findresult = self.storage.get_first_n_itens('TestCollection', 1)
         test_id = findresult[0]['_id']
-        print test_id
+#         print test_id
         findresult = self.storage.get_item_by_id('TestCollection', test_id)
-        print findresult
+#         print findresult
         self.assertEqual(self.test_data1, findresult[0])
 
     def test_db_get_date_in_range_all(self):
@@ -101,6 +101,19 @@ class Nors_LocalStorage_DAO_Test(unittest.TestCase):
 
         self.assertEqual(update_result.matched_count, 1)
 #         self.assertEqual(update_result.modified_count, 1) # i dont know why this fail
+        
+    def test_delete_by_id(self):
+        findresult = self.storage.get_first_n_itens('TestCollection', 1)
+        test_id = findresult[0]['_id']
+#         print test_id
+        findresult = self.storage.delete_by_id('TestCollection', test_id)
+#         print findresult
+        self.assertEqual(1, findresult)
+
+        findresult = self.storage.get_item_by_id('TestCollection', test_id)
+        print findresult
+        self.assertEqual(len(findresult), 0)
+        
         
     def tearDown(self):
         self.storage.dropCollection('TestCollection')
