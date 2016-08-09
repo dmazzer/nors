@@ -53,7 +53,8 @@ class Nors_Client():
         self.client_description = self.config.ReadConfig('client', 'description')
         self.client_location = self.config.ReadConfig('client', 'location')
         
-        self.check_for_local_data_interval = 1
+        self.check_for_local_data_interval = 10
+        # TODO: Include this parameter in config file
         
         client_information = Remote(self.client_id, self.client_name, self.client_description, self.client_location)
 
@@ -89,18 +90,13 @@ class Nors_Client():
     def _update_local(self):
         pass
 
-    def _remove_id(self, d, key='_id'):
-        r = dict(d)
-        del r[key]
-        return r
-
     def _update_remote(self):
-        logger.log('updating server', 'debug')
+        # TODO: Before send the data must be arranged againt a model 
         data_to_send = self.local_storage.get_first()
-        if len(data_to_send) > 0:
+        while len(data_to_send) > 0:
             data_id = data_to_send[0]['_id']
             data_to_send[0].pop('_id')
-            logger.log('Sending id: ' + str(data_id), 'debug')
+            logger.log('Update Remote: sending id: ' + str(data_id), 'debug')
             rv, r = self.conn.post_resource('/streams/', data_to_send[0])
             
             if rv == 201:
@@ -109,6 +105,12 @@ class Nors_Client():
                     logger.log('Item not found on database', 'debug')
                 else:
                     logger.log('Item deleted from database', 'debug')
+            
+            data_to_send = self.local_storage.get_first()
+
+#         else:
+#             logger.log('Update Remote: nothing to send', 'debug')
+
                     
     def _pop_sensor_data(self):
         pass
