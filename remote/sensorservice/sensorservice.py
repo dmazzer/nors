@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 """ 
-sensors.py: Sensors controllers and readers 
+sensorservice.py: Sensors controllers and readers 
 
 """
 
@@ -9,33 +9,36 @@ __author__ = "Daniel Mazzer"
 __copyright__ = "Copyright 2016, NORS project"
 __credits__ = ""
 __license__ = "GPL"
-__version__ = "0.1.0"
 __maintainer__ = "Daniel Mazzer"
 __email__ = "dmazzer@gmail.com"
-__status__ = "Development"
 
 import zmq
 import sys
 from threading import Thread
 import Queue
 import time
-from uuid import uuid1
 import json
 import signal
-import os
 
 class Nors_SensorService:
-    def __init__(self):
+    def __init__(self, pull_sensors_interval, LocalStorage_class):
+        '''
+        :param pull_sensors_interval: Time in seconds that registered sensors are pulled
+        :param LocalStorage_class: LocalStorage object
+        '''
         
-        logger.log('SensorService started')
+        logger.log('SensorService started', 'info')
         
         self.q = Queue.Queue()
+        self.pull_sensors_interval = pull_sensors_interval
         self.ipc_sensor_catalog = "ipc:///tmp/SensorCatalogService.pipe"
 
         self.SensorCatalog()
         self.sensor_catalog_list = []
     
         self.SensorPulling()
+        
+        self.LocalStorage = LocalStorage_class
     
     def SensorPulling(self):
         t_pulling = Thread(target=self.SensorPullingWork, name='SensorPullingWork', args=(self.q, ) )
@@ -50,20 +53,20 @@ class Nors_SensorService:
         
     def SensorPullingWork(self, q):
         '''
-        SensorPullingWork - Consult sensors to get sensor data
+        SensorPullingWork - Consult sensorservice to get sensor data
         
-        Note: With this implementation, all sensors are inquired, one by one, by the same thread.
+        Note: With this implementation, all sensorservice are inquired, one by one, by the same thread.
         The ZMQ sockets are created as needed.
         Another architecture option may spawn one thread per sensor, so each thread may inquire the 
-        sensor in independent time intervals. With independe threads may be more simple to 
-        identify non responding sensors.
+        sensor in independent time intervals. With independent threads may be more simple to 
+        identify non responding sensorservice.
         
         Note 2: Feature missing: The platform may be more flexible if it allows the ZMQ socket 
         to be other than only IPC, i.e.: TCP. 
         '''
         while True:
             for sensor in self.sensor_catalog_list:
-                logger.log('Pulling :' + sensor['name'] + ' ' + sensor['sensor_id'])
+                logger.log('Pulling: ' + sensor['name'] + ' ' + sensor['sensor_id'])
             
                 # ZeroMQ Context
                 context = zmq.Context()
@@ -76,14 +79,30 @@ class Nors_SensorService:
                 poller = zmq.Poller()
                 poller.register(socket, zmq.POLLIN)
 
+#                 logger.log('Sensor data requesting...')
                 socket.send_json({"query":"sensor_data"})
-            
-                if poller.poll(10*1000): # 10s timeout in milliseconds
-                    result = socket.recv_json()
-                    # TODO: Send data to database or cloud service. Needs design!!
+#                 logger.log('Sensor data requested.')
+
+                if poller.poll(15*1000): # 15s timeout in milliseconds
+                    sensor_data = socket.recv_json()
+                    logger.log(sensor['name'] + ': ' + str(sensor_data))
+                    logger.log('-----')
+                    
+                    try:
+                        self.LocalStorage.store(json.loads(sensor_data))
+                    except Exception, e:
+                        logger.log('There is a problem to save the sensor value to database.')
+                        logger.log('Maybe a wrong or malformed JSON string...')
+                        print e.value
+                        raise SystemExit
+                    
+                    
+                    
                 else:
-                    logger.log('Timeout processing auth request' + sensor['name'] + ' ' + sensor['sensor_id'])
-            time.sleep(5)
+                    logger.log('Timeout sensor data request ' + sensor['name'] + ' ' + sensor['sensor_id'])
+                #time.sleep(0.1) # delay between sensor_read, not really needed
+
+            time.sleep(self.pull_sensors_interval)
         
     def SensorCatalogWork(self, q):
         # ZeroMQ Context
@@ -103,7 +122,7 @@ class Nors_SensorService:
     
     def SensorCatalogRegisterCheckID(self, message):
         
-        # in future, the ID may be checked to prevent duplicated sensors and dead sensors to be pulled.
+        # in future, the ID may be checked to prevent duplicated sensorservice and dead sensorservice to be pulled.
         
         sensor_id = message['sensor_id']
         sensor_name = message['name']
@@ -120,7 +139,7 @@ if __name__ == '__main__':
     
     sys.path.append('../')
     from norsutils.logmsgs.logger import Logger
-    logger = Logger()
+    logger = Logger('debug')
     logger.log("SensorService started by command line")
     sensor_service = Nors_SensorService()
 
@@ -131,4 +150,11 @@ if __name__ == '__main__':
     signal.signal(signal.SIGUSR1, do_exit)
     
     signal.pause()    
+
+else:
+    sys.path.append('../')
+    from norsutils.logmsgs.logger import Logger
+    logger = Logger('debug')
+
+
 
