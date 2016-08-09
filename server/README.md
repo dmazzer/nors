@@ -1,6 +1,8 @@
 # NORS Project - The Server #
 
-# Building Python virtual environment #
+## Preparing Environment ##
+
+### Building Native Environment ###
 
 $ virtualenv -p python3 venv
 $ source venv/bin/activate
@@ -9,12 +11,17 @@ $ source venv/bin/activate
 (venv) $ ./run.py
 (venv) $ deactivate
 
-# Building docker container #
+### Building a Container ###
 
-On server project folder:
+You will need docker installed. For Ubuntu 14.04:
 
+$ sudo apt-get update && sudo apt-get install docker.io
+
+Build the container:
+
+$ cd /path_to_nors/server
 $ docker build --rm -t nors .
+
+Run the container:
+
 $ docker run -ti -P --rm nors
-
-
-
