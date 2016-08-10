@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-""" 
+#!/usr/bin/env python3
+"""
 nors_srv.py: NORS Server application
 
 """
@@ -31,6 +31,6 @@ if __name__ == '__main__':
     config = Nors_Configuration()
     server_ip = config.ReadConfig('server', 'ip')
     server_port = int(config.ReadConfig('server', 'port'))
-    
+
     app.debug = True
     app.run(host=server_ip, port=server_port)
