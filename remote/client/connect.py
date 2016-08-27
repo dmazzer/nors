@@ -133,24 +133,31 @@ class Nors_Connect():
         
         try:
             r = requests.post(request_string, data=data_json, headers=headers)
-        except requests.exceptions.RequestException as e:
-            logger.log('Error connection to Server: ' + str(e), 'error')
-#             return r.raise_for_status() , None
-        else:
-            logger.log('Response: ' + str(r.text), 'debug')
-            logger.log('Headers: ' + str(r.headers), 'debug')
-            logger.log('Return Code: ' + str(r.status_code), 'debug')
-       
-            if r.status_code >= 400 and r.status_code < 500:
-                self.token = self._token_manager(renew=True)
-
-            if r.status_code == 200:
-                if r.headers.get('content-type') == 'application/json':
-                    return r.status_code, r.json()
-                else:
-                    return r.status_code, r.text
+            try:
+                r.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                print "And you get an HTTPError:", e.message
+                print r.status_code
             else:
-                return r.status_code, None
+                logger.log('Response: ' + str(r.text), 'debug')
+                logger.log('Headers: ' + str(r.headers), 'debug')
+                logger.log('Return Code: ' + str(r.status_code), 'debug')
+           
+                if r.status_code >= 400 and r.status_code < 500:
+                    logger.log('AUTH Response: ' + str(r.headers), 'debug')
+                    self.token = self._token_manager(renew=True)
+        
+                if r.status_code == 200:
+                    if r.headers.get('content-type') == 'application/json':
+                        return r.status_code, r.json()
+                    else:
+                        return r.status_code, r.text
+                else:
+                    return r.status_code, None
+
+        except requests.exceptions.RequestException as e:
+            logger.log('Error when connecting to Server: ' + str(e), 'error')
+            return None , None
             
     
     def post_resource(self, resource, data):
