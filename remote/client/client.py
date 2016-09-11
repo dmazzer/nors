@@ -54,6 +54,7 @@ class Nors_Client():
         self.client_location = self.config.ReadConfig('client', 'location')
         
         self.check_for_local_data_interval = 10
+        self.send_local_data_interval = 1
         # TODO: Include this parameter in config file
         
         client_information = Remote(self.client_id, self.client_name, self.client_description, self.client_location)
@@ -120,6 +121,8 @@ class Nors_Client():
                 logger.log('Post data to server failed', 'error')
             
             data_to_send = self.local_storage.get_first()
+            
+            time.sleep(self.send_local_data_interval)
             
         return connection_failed
 

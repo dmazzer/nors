@@ -37,8 +37,9 @@ class Nors_Connect():
         
         #TODO: implement a token timeout to force token expiration
         # self.token_time_out = 300
-        self.token = ''
-        self.get_token()
+        self.token = 'None'
+        self.token_renew = True
+        self._token_manager()
         
 #     def check_connection(self):
 #         
@@ -61,121 +62,131 @@ class Nors_Connect():
         logger.log('Request String: ' + request_string, 'debug')
         logger.log('Data String: ' + str(data), 'debug')
         
+        r = None
+        
         try:
             r = requests.post(request_string, 
                          headers={'content-type': 'application/json'},
                          data=json.dumps(data)
                          )
+            
         except requests.exceptions.RequestException as e:
             logger.log('Error connection to Server: ' + str(e), 'error')
-            return None
-        else:
-            logger.log(r.text, 'debug')
-            logger.log(r.headers, 'debug')
-            if r.status_code == 200:
-                return r.json()["access_token"]
+            return ''
         
-    #@staticmethod
-    def _token_manager(self, renew=False):
-        if renew is True:
+        logger.log(r.text, 'debug')
+        logger.log(r.headers, 'debug')
+        if r.status_code == 200:
+            return r.json()["access_token"]
+        
+        return ''
+            
+        
+    def _token_manager(self):
+        if self.token_renew is True:
+            self.token_renew = False
             self.token = self.get_token()
             return self.token
         else:
             return self.token
+        
+    def renew_token(self):
+        self.token_renew = True
     
     def get_resource(self, resource, data=None, headers={}):
         logger.log('----------------------------------------------------------', 'debug')
         logger.log('GET at resource ' + resource, 'debug')
         
         headers = headers.copy()
-        headers['Authorization'] = 'JWT ' + self._token_manager(renew=False)
+        headers['Authorization'] = 'JWT ' + self._token_manager()
         headers['Content-Type'] = 'application/json'
         headers['Accept'] = 'application/json'
         
-        # TODO:
         if data is not None:
             logger.log('GET WITH DATA NOT IMPLEMENTED', 'debug')
             
         request_string = self.server_address + str(resource)
         logger.log('Request String: ' + request_string, 'debug')
         
+        r = None
+
         try:
             r = requests.get(request_string, headers=headers)
         except requests.exceptions.RequestException as e:
-            logger.log('Error connection to Server: ' + str(e), 'error')
-            return requests.Response.raise_for_status() , None
-        else:
-            logger.log('Response: ' + str(r.text), 'debug')
-            logger.log('Headers: ' + str(r.headers), 'debug')
-            logger.log('Return Code: ' + str(r.status_code), 'debug')
+            logger.log('Error when trying to connect to Server: ' + str(e), 'error')
+            return None , None
         
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print "HTTP connection with Server error: ", e.message
             if r.status_code >= 400 and r.status_code < 500:
-                self.token = self._token_manager(renew=True)
+                logger.log('AUTH Response: ' + str(r.headers), 'debug')
+                self.renew_token()
+            return None , None
 
-            if r.status_code == 200:
-                if r.headers.get('content-type') == 'application/json':
-                    return r.status_code, r.json()
-                else:
-                    return r.status_code, r.text
+        logger.log('Response: ' + str(r.text), 'debug')
+        logger.log('Headers: ' + str(r.headers), 'debug')
+        logger.log('Return Code: ' + str(r.status_code), 'debug')
+    
+        if r.status_code == 200:
+            if r.headers.get('content-type') == 'application/json':
+                return r.status_code, r.json()
             else:
-                return r.status_code, None
+                return r.status_code, r.text
+        else:
+            return r.status_code, None
             
+        return False        
         
+    def post_resource(self, resource, data):
+        if type(data) is dict:
+            data_json = json.dumps(data, encoding='utf8')
+        else:
+            data_json = data
+            
+        rv, r = self._post_resource(resource, data_json)            
+        return rv, r
+
     def _post_resource(self, resource, data_json, headers={}):
         logger.log('----------------------------------------------------------', 'debug')
         logger.log('POST at resource ' + resource, 'debug')
         
         headers = headers.copy()
-        headers['Authorization'] = 'JWT ' + self._token_manager(renew=False)
+        headers['Authorization'] = 'JWT ' + self._token_manager()
         headers['Content-Type'] = 'application/json'
         headers['Accept'] = 'application/json'
 
         request_string = self.server_address + str(resource)
         logger.log('Request String: ' + request_string, 'debug')
         
+        r = None
         try:
             r = requests.post(request_string, data=data_json, headers=headers)
-            try:
-                r.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                print "And you get an HTTPError: ", e.message
-                return None , None
-            else:
-                logger.log('Response: ' + str(r.text), 'debug')
-                logger.log('Headers: ' + str(r.headers), 'debug')
-                logger.log('Return Code: ' + str(r.status_code), 'debug')
-           
-                if r.status_code >= 400 and r.status_code < 500:
-                    logger.log('AUTH Response: ' + str(r.headers), 'debug')
-                    self.token = self._token_manager(renew=True)
-        
-                if r.status_code == 200:
-                    if r.headers.get('content-type') == 'application/json':
-                        return r.status_code, r.json()
-                    else:
-                        return r.status_code, r.text
-                else:
-                    return r.status_code, None
-
         except requests.exceptions.RequestException as e:
-            logger.log('Error when connecting to Server: ' + str(e), 'error')
+            logger.log('Error when trying to connect to Server: ' + str(e), 'error')
             return None , None
-        
-        return None , None        
-    
-    def post_resource(self, resource, data):
-        if type(data) is dict:
-            data_json = json.dumps(data, encoding='utf8')
+            
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print "HTTP connection with Server error: ", e.message
+            if r.status_code >= 400 and r.status_code < 500:
+                logger.log('AUTH Response: ' + str(r.headers), 'debug')
+                self.renew_token()
+            return None , None
+            
+        logger.log('Response: ' + str(r.text), 'debug')
+        logger.log('Headers: ' + str(r.headers), 'debug')
+        logger.log('Return Code: ' + str(r.status_code), 'debug')
+   
+        if r.status_code == 200:
+            if r.headers.get('content-type') == 'application/json':
+                return r.status_code, r.json()
+            else:
+                return r.status_code, r.text
         else:
-#             logger.log('POST ERROR: data is not dict, sending as is...', 'debug')
-            data_json = data
-            
-        rv, r = self._post_resource(resource, data_json)            
-        return rv, r
+            return r.status_code, None
+
+        return False       
     
-    
-        
-            
-            
-                
-        
