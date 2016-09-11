@@ -74,7 +74,7 @@ class Nors_LocalStorage_DAO:
             return self._find_with_sort_without_string(CollectionName, SearchLimit, Sort)
         
         else:
-            return False
+            return None
     
     def _find_with_sort_without_string(self, CollectionName, SearchLimit, Sort=None):
         collection = self.db_client[str(CollectionName)]

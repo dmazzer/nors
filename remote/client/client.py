@@ -32,7 +32,7 @@ sys.path.append('../../')
 from models.remote import Remote
 from models.stream import Stream
 
-logger.log("NORS Client started", 'info')
+logger.log("NORS Client started", 'debug')
 
 class Nors_Client():
     def __init__(self, config, local_storage, autoinit_check_for_local_data=True):
@@ -54,6 +54,7 @@ class Nors_Client():
         self.client_location = self.config.ReadConfig('client', 'location')
         
         self.check_for_local_data_interval = 10
+        self.send_local_data_interval = 1
         # TODO: Include this parameter in config file
         
         client_information = Remote(self.client_id, self.client_name, self.client_description, self.client_location)
@@ -80,20 +81,30 @@ class Nors_Client():
         timer_thread.daemon = True
         timer_thread.start()
 
+#     def check_for_local_data_worker(self):
+#         self.next_call = time.time()
+#         while True:
+#             self.next_call = self.next_call + self.check_for_local_data_interval;
+#             
+#             self._update_remote()
+#             
+#             timer_delta = self.next_call - time.time()
+#             if timer_delta > 0:
+#                 time.sleep(self.next_call - time.time())
+    
     def check_for_local_data_worker(self):
-        self.next_call = time.time()
         while True:
             self._update_remote()
-            self.next_call = self.next_call+self.check_for_local_data_interval;
-            time.sleep(self.next_call - time.time())
+            time.sleep(self.check_for_local_data_interval)
     
     def _update_local(self):
         pass
 
     def _update_remote(self):
-        # TODO: Before send the data must be arranged againt a model 
+        # TODO: Before send the data must be arranged against a model 
+        connection_failed = False
         data_to_send = self.local_storage.get_first()
-        while len(data_to_send) > 0:
+        while (data_to_send is not None) and (connection_failed is False):
             data_id = data_to_send[0]['_id']
             data_to_send[0].pop('_id')
             logger.log('Update Remote: sending id: ' + str(data_id), 'debug')
@@ -105,13 +116,16 @@ class Nors_Client():
                     logger.log('Item not found on database', 'debug')
                 else:
                     logger.log('Item deleted from database', 'debug')
+            else:
+                connection_failed = True
+                logger.log('Post data to server failed', 'error')
             
             data_to_send = self.local_storage.get_first()
+            
+            time.sleep(self.send_local_data_interval)
+            
+        return connection_failed
 
-#         else:
-#             logger.log('Update Remote: nothing to send', 'debug')
-
-                    
     def _pop_sensor_data(self):
         pass
     
