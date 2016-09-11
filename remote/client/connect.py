@@ -136,8 +136,8 @@ class Nors_Connect():
             try:
                 r.raise_for_status()
             except requests.exceptions.HTTPError as e:
-                print "And you get an HTTPError:", e.message
-                print r.status_code
+                print "And you get an HTTPError: ", e.message
+                return None , None
             else:
                 logger.log('Response: ' + str(r.text), 'debug')
                 logger.log('Headers: ' + str(r.headers), 'debug')
@@ -158,7 +158,8 @@ class Nors_Connect():
         except requests.exceptions.RequestException as e:
             logger.log('Error when connecting to Server: ' + str(e), 'error')
             return None , None
-            
+        
+        return None , None        
     
     def post_resource(self, resource, data):
         if type(data) is dict:
@@ -167,7 +168,8 @@ class Nors_Connect():
 #             logger.log('POST ERROR: data is not dict, sending as is...', 'debug')
             data_json = data
             
-        return self._post_resource(resource, data_json)
+        rv, r = self._post_resource(resource, data_json)            
+        return rv, r
     
     
         
