@@ -35,24 +35,10 @@ class Nors_Connect():
 
         self.server_address = 'http://' + server_ip + ':' + server_port + server_api_path
         
-        #TODO: implement a token timeout to force token expiration
-        # self.token_time_out = 300
         self.token = 'None'
         self.token_renew = True
         self._token_manager()
         
-#     def check_connection(self):
-#         
-#         logger.log('Sending GET command to server:', 'debug')
-#         headers = {'content-type': 'application/json'}
-#         
-#         rv, rt = self.get_resource('/server-info/')
-#         if rv == 200:
-#             return True
-#         else:
-#             return False
-    
-    
     def get_token(self):
         logger.log('----------------------------------------------------------', 'debug')
         logger.log('Requesting access token', 'debug')
