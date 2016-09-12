@@ -53,9 +53,8 @@ class Nors_Client():
         self.client_description = self.config.ReadConfig('client', 'description')
         self.client_location = self.config.ReadConfig('client', 'location')
         
-        self.check_for_local_data_interval = 10
-        self.send_local_data_interval = 1
-        # TODO: Include this parameter in config file
+        self.check_for_local_data_interval = float(self.config.ReadConfig('options', 'check_for_local_data_interval'))
+        self.send_local_data_interval = float(self.config.ReadConfig('options', 'send_local_data_interval'))
         
         client_information = Remote(self.client_id, self.client_name, self.client_description, self.client_location)
 
@@ -104,7 +103,7 @@ class Nors_Client():
         # TODO: Before send the data must be arranged against a model 
         connection_failed = False
         data_to_send = self.local_storage.get_first()
-        while (data_to_send is not None) and (connection_failed is False):
+        while (len(data_to_send) > 0 ) and (connection_failed is False):
             data_id = data_to_send[0]['_id']
             data_to_send[0].pop('_id')
             logger.log('Update Remote: sending id: ' + str(data_id), 'debug')
