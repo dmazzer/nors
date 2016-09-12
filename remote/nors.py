@@ -72,11 +72,6 @@ if __name__ == '__main__':
     sensor_dummy = sensor_dummy.RealSensor()
     sensor_dht = sensor_dht.RealSensor()
     sensor_bmp180 = sensor_bmp180.RealSensor()
-    
-
-    # Initialize connection with remote server
-    # TODO: ada
-    
 
     # Hold forever
     def do_exit(sig, stack):
