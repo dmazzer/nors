@@ -169,5 +169,6 @@ class Nors_GenericSensor(object):
         return sensor_data 
 
     def getDateTime(self):
-        return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+#        return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        return str(datetime.datetime.utcnow().isoformat()[:-3])
     
