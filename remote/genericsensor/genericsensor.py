@@ -87,12 +87,20 @@ class Nors_GenericSensor(object):
         self.SignIn()
 
     def SensorDataProcessing(self, sensor_data):
+        ''' The return object must be a dictionary '''
         logger.log(self.sensor_model.get_sensor_property('name') + ': Default sensor data processing', 'debug')
         return sensor_data
     
     def SensorRead(self):
+        ''' The return object must be a dictionary '''
         logger.log(self.sensor_model.get_sensor_property('name') + ': Default sensor data read', 'debug')
-        return random.uniform(-1,1)
+        return { 'value': random.uniform(-1,1) }
+    
+    def ValidateSensorRead(self, sensor_data):
+        if isinstance(sensor_data, dict):
+            return sensor_data
+        else:
+            raise ValueError('SensorRead must return data using a dictionary structure.')
     
     def SignIn(self):
         '''
@@ -136,13 +144,32 @@ class Nors_GenericSensor(object):
     def SensorWork(self, q):
         '''
         SensorWork - Read a fisical sensor, call data processing and send data to storage
+        
+        A data structure is build containing sensor data and time stamp. Example:
+        { 'ts': 2016-08-07 19:17:07.779
+          'sensor_data': {
+                'hum' : '44.0',
+                'temp' : '22.0'
+        }
+
+        This method calls ReadSensor and SensorDataProcessing.
+        Finally data is pushed to storage queue.  
+        
         '''
         
         while True:
             time.sleep(self.sensor_model.get_sensor_property('read_interval'))
-            sensor_data = self.SensorRead()
+            sensor_data = {}
+            try:
+                sensor_data = self.ValidateSensorRead(self.SensorRead())
+            except ValueError as err:
+                print(err.value)
+            
             sensor_data_processed = self.SensorDataProcessing(sensor_data)
-            self.SensorDataStorage.put(sensor_data_processed)
+            
+            sensor_information = {'ts': self.getDateTime(), 'sensor_data': sensor_data_processed }
+            
+            self.SensorDataStorage.put(sensor_information)
             
     def SensorPullWork(self, q):
         '''
@@ -160,11 +187,11 @@ class Nors_GenericSensor(object):
         while True:
             msg = socket.recv_json()
             if msg['query'] == 'sensor_data':
-                sensor_data = {'sensor_data': self.SensorDataStorage.get()}
+                sensor_data = self.SensorDataStorage.get()
                 socket.send_json(json.dumps(self.SensorDataInformation(sensor_data)))
 
     def SensorDataInformation(self, sensor_data):
-        sensor_data['date'] = self.getDateTime()
+        #sensor_data['date'] = self.getDateTime()
         sensor_data['sensor_id'] = self.sensor_model.get_sensor_property('sensor_id')
         return sensor_data 
 
