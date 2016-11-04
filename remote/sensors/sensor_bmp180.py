@@ -17,7 +17,6 @@ __email__ = "dmazzer@gmail.com"
 import sys
 import signal
 
-# sys.path.append('../')
 from genericsensor.genericsensor import Nors_GenericSensor
 
 sys.path.append('../../GrovePi/Software/Python/grove_barometer_sensors/barometric_sensor_bmp180/')
@@ -26,6 +25,10 @@ import smbus
 import RPi.GPIO as GPIO
 from grove_i2c_barometic_sensor_BMP180 import BMP085
 
+from norsutils.logmsgs.logger import Logger
+
+logger = Logger('debug')
+logger.log("SENSOR - BMP180 Barometer sensor", 'info')
 
 class RealSensor(Nors_GenericSensor):
     def __init__(self):
@@ -78,11 +81,6 @@ class RealSensor(Nors_GenericSensor):
     def SensorDataProcessing(self,sensor_data):
         return sensor_data
         
-
-from norsutils.logmsgs.logger import Logger
-
-logger = Logger('debug')
-logger.log("SENSOR - BMP180 Barometer sensor", 'info')
 
 if __name__ == '__main__':
     sensor = RealSensor()

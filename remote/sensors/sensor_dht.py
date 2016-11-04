@@ -17,10 +17,6 @@ __email__ = "dmazzer@gmail.com"
 import sys
 import signal
 
-# sys.path.append('./genericsensor/')
-# sys.path.append('./norsutils/')
-# sys.path.append('../../')
-
 from genericsensor.genericsensor import Nors_GenericSensor
 
 from grovepi import *

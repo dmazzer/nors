@@ -44,13 +44,15 @@ class Nors_GenericSensorStorage(object):
         self.sensor_data_storage = sensor_data
     
     def get(self):
-        return self.sensor_data_storage
+        ret = self.sensor_data_storage
+        self.sensor_data_storage = {}
+        return ret
 
 class Nors_GenericSensor(object):
     '''
     GenericSensor class, serve as a starting point to create a specific sensor reading class.
    
-    A real sensor reading application must implements SensorRead and SensorDataProcessing
+    A real sensor reading application must implement SensorRead and SensorDataProcessing
     '''
     
     def __init__(self, 
