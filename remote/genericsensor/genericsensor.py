@@ -26,6 +26,7 @@ logger = Logger('info')
 
 sys.path.append('../../')
 from models import sensor as SensorModel
+from models import sensor_service_model
 
 class Nors_GenericSensorStorage(object):
     '''
@@ -105,10 +106,12 @@ class Nors_GenericSensor(object):
     def ValidateSensorRead(self, sensor_data):
         if sensor_data is None:
             raise ValueError('No data was readed from the sensor.')            
+            return None
         if isinstance(sensor_data, dict):
             return sensor_data
         else:
             raise ValueError('SensorRead must return data using a dictionary structure.')
+            return None
     
     def SignIn(self):
         '''
@@ -196,18 +199,21 @@ class Nors_GenericSensor(object):
             msg = socket.recv_json()
             if msg['query'] == 'sensor_data':
                 sensor_data = self.SensorDataStorage.get()
-                if sensor_data is not None:
-                    socket.send_json(json.dumps(self.SensorDataInformation(sensor_data)))
-                else:
-                    socket.send_json(json.dumps({}))
+#                 if sensor_data is not None:
+                socket.send_json(json.dumps(self.SensorDataInformation(sensor_data)))
+#                 else:
+#                     socket.send_json(json.dumps({}))
                     # TODO: The class does not respond to the sensorservice if there is no data
                     # to send. This must be improved with a better communication between services.
                     
-
     def SensorDataInformation(self, sensor_data):
         #sensor_data['date'] = self.getDateTime()
-        sensor_data['sensor_id'] = self.sensor_model.get_sensor_property('sensor_id')
-        return sensor_data 
+        if sensor_data is None:
+            return sensor_service_model.SensorServiceModel(message_status='no data', message=None).get()
+        else:
+            sensor_data['sensor_id'] = self.sensor_model.get_sensor_property('sensor_id')
+            return sensor_service_model.SensorServiceModel(message_status='valid', message=sensor_data).get()
+#         return sensor_data 
 
     def getDateTime(self):
 #        return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])

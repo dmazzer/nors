@@ -57,7 +57,7 @@ if __name__ == '__main__':
     
     # Load configuration parameters 
     config = load_configuration()
-    pull_sensors_interval = 15
+    pull_sensors_interval = 5
     
     # Initialize local services
     local_storage = Nors_LocalStorage(config)
