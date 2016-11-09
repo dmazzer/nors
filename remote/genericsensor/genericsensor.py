@@ -39,14 +39,18 @@ class Nors_GenericSensorStorage(object):
     
     def __init__(self):
         self.sensor_data_storage = {}
+        self.stored_messages = 0;
     
     def put(self, sensor_data):
         self.sensor_data_storage = sensor_data
+        self.stored_messages = 1
     
     def get(self):
-        ret = self.sensor_data_storage
-        self.sensor_data_storage = {}
-        return ret
+        if self.stored_messages != 0:
+            self.stored_messages = 0
+            return self.sensor_data_storage
+        else:
+            return None
 
 class Nors_GenericSensor(object):
     '''
@@ -99,6 +103,8 @@ class Nors_GenericSensor(object):
         return { 'value': random.uniform(-1,1) }
     
     def ValidateSensorRead(self, sensor_data):
+        if sensor_data is None:
+            raise ValueError('No data was readed from the sensor.')            
         if isinstance(sensor_data, dict):
             return sensor_data
         else:
@@ -161,17 +167,17 @@ class Nors_GenericSensor(object):
         
         while True:
             time.sleep(self.sensor_model.get_sensor_property('read_interval'))
-            sensor_data = {}
+            sensor_data = None
+            
             try:
                 sensor_data = self.ValidateSensorRead(self.SensorRead())
             except ValueError as err:
-                print(err.value)
-            
-            sensor_data_processed = self.SensorDataProcessing(sensor_data)
-            
-            sensor_information = {'ts': self.getDateTime(), 'sensor_data': sensor_data_processed }
-            
-            self.SensorDataStorage.put(sensor_information)
+                print("SensorWork failed to read data from the sensor." + str(err))
+                
+            if sensor_data is not None:
+                sensor_data_processed = self.SensorDataProcessing(sensor_data)
+                sensor_information = {'ts': self.getDateTime(), 'sensor_data': sensor_data_processed }
+                self.SensorDataStorage.put(sensor_information)
             
     def SensorPullWork(self, q):
         '''
@@ -190,7 +196,13 @@ class Nors_GenericSensor(object):
             msg = socket.recv_json()
             if msg['query'] == 'sensor_data':
                 sensor_data = self.SensorDataStorage.get()
-                socket.send_json(json.dumps(self.SensorDataInformation(sensor_data)))
+                if sensor_data is not None:
+                    socket.send_json(json.dumps(self.SensorDataInformation(sensor_data)))
+                else:
+                    socket.send_json(json.dumps({}))
+                    # TODO: The class does not respond to the sensorservice if there is no data
+                    # to send. This must be improved with a better communication between services.
+                    
 
     def SensorDataInformation(self, sensor_data):
         #sensor_data['date'] = self.getDateTime()

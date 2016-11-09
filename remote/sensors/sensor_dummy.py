@@ -41,8 +41,8 @@ class RealSensor(Nors_GenericSensor):
                                          gs_id = '48897fe8-4917-11e6-b789-b827ebc6c8e4',
                                          gs_description = 'Dummy (fake) sensor', 
                                          gs_interface = None,
-                                         gs_pull_interval = 5, 
-                                         gs_read_interval = 4)
+                                         gs_pull_interval = 15, 
+                                         gs_read_interval = 14)
 
         
     def SensorRead(self):
