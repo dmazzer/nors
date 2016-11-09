@@ -144,7 +144,7 @@ class Nors_Connect():
         headers['Accept'] = 'application/json'
 
         request_string = self.server_address + str(resource)
-        logger.log('Request String: ' + request_string, 'debug')
+#         logger.log('Request String: ' + request_string, 'debug')
         
         r = None
         try:
