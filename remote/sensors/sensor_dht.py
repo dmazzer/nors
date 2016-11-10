@@ -44,9 +44,9 @@ class RealSensor(Nors_GenericSensor):
     
         try:
             [ temp,hum ] = dht(dht_sensor_port,0)        #Get the temperature and Humidity from the DHT sensor
-            t = str(temp)
-            h = str(hum)
-            logger.log( "Temp = " + t + "  Humidity = " + h + "%", 'debug')     
+            t = temp
+            h = hum
+            logger.log( "Temp = " + str(t) + "  Humidity = " + str(h) + "%", 'debug')     
             return {'temp': t, 'hum': h}
         except (IOError,TypeError) as e:
             logger.log("Error reading sensor " + self.sensor_name, 'error')

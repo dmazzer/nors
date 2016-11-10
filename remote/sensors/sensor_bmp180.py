@@ -60,10 +60,10 @@ class RealSensor(Nors_GenericSensor):
 
     def SensorRead(self):
         try:
-            temp = str(self.bmp.readTemperature())
+            temp = self.bmp.readTemperature()
             
             # Read the current barometric pressure level
-            pressure = str(self.bmp.readPressure() / 100.0)
+            pressure = self.bmp.readPressure() / 100.0
             
             # To calculate altitude based on an estimated mean sea level pressure
             # (1013.25 hPa) call the function as follows, but this won't be very accurate
@@ -72,8 +72,8 @@ class RealSensor(Nors_GenericSensor):
             # To specify a more accurate altitude, enter the correct mean sea level
             # pressure level.  For example, if the current pressure level is 1023.50 hPa
             # enter 102350 since we include two decimal places in the integer value
-            altitude = str(self.bmp.readAltitude(99191))
-            logger.log( "Temp = " + temp + "  Press = " + pressure + " hPa" + "  Alt = " + altitude, 'debug')     
+            altitude = self.bmp.readAltitude(99191)
+            logger.log( "Temp = " + str(temp) + "  Press = " + str(pressure) + " hPa" + "  Alt = " + str(altitude), 'debug')     
             return {'temp': temp, 'press': pressure, 'alt': altitude}
         except (IOError,TypeError) as e:
             logger.log("Error reading sensor " + self.sensor_name, 'error')
