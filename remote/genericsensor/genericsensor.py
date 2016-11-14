@@ -99,7 +99,7 @@ class Nors_GenericSensor(object):
         return sensor_data
     
     def SensorRead(self):
-        ''' The return object must be a dictionary '''
+        ''' The return object must be a dictionary or None '''
         logger.log(self.sensor_model.get_sensor_property('name') + ': Default sensor data read', 'debug')
         return { 'value': random.uniform(-1,1) }
     
@@ -175,7 +175,7 @@ class Nors_GenericSensor(object):
             try:
                 sensor_data = self.ValidateSensorRead(self.SensorRead())
             except ValueError as err:
-                print("SensorWork failed to read data from the sensor." + str(err))
+                print(str(err))
                 
             if sensor_data is not None:
                 sensor_data_processed = self.SensorDataProcessing(sensor_data)
