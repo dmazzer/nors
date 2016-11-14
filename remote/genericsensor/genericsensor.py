@@ -105,7 +105,7 @@ class Nors_GenericSensor(object):
     
     def ValidateSensorRead(self, sensor_data):
         if sensor_data is None:
-            raise ValueError('No data was readed from the sensor.')            
+            #raise ValueError('No data was readed from the sensor.')            
             return None
         if isinstance(sensor_data, dict):
             return sensor_data
@@ -175,7 +175,7 @@ class Nors_GenericSensor(object):
             try:
                 sensor_data = self.ValidateSensorRead(self.SensorRead())
             except ValueError as err:
-                print(str(err))
+                logger.log(str(err), 'error')
                 
             if sensor_data is not None:
                 sensor_data_processed = self.SensorDataProcessing(sensor_data)
