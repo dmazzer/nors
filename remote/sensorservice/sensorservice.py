@@ -107,7 +107,8 @@ class Nors_SensorService:
                         logger.log('No sensor data', 'debug')
                 else:
                     logger.log('Timeout sensor data request ' + sensor['name'] + ' ' + sensor['sensor_id'])
-                #time.sleep(0.1) # delay between sensor_read, not really needed
+                    # TODO: After some timeouts, the problematic sensor must be deregistered
+                
 
             time.sleep(self.pull_sensors_interval)
         
@@ -138,7 +139,6 @@ class Nors_SensorService:
             return False
         else:
             logger.log('Registering ' + sensor_name + ' - '  + sensor_id)
-#             sensor_append = {'name': sensor_name, 'sensor_id': sensor_id} 
             self.sensor_catalog_list.append(message)
             return True
 
