@@ -1,0 +1,3 @@
+[submodule "remote/sensors/nors_energymeter"]
+	path = remote/sensors/nors_energymeter
+	url = https://github.com/dmazzer/nors-energymeter.git
