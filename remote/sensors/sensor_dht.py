@@ -40,7 +40,7 @@ class RealSensor(Nors_GenericSensor):
                                          gs_read_interval = 14)
 
     def SensorRead(self):
-        dht_sensor_port = 2        # GrovePI port
+        dht_sensor_port = 8        # GrovePI port
     
         try:
             [ temp,hum ] = dht(dht_sensor_port,0)        #Get the temperature and Humidity from the DHT sensor
