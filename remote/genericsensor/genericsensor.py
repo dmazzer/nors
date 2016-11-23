@@ -65,7 +65,6 @@ class Nors_GenericSensor(object):
                  gs_id = '', 
                  gs_description = 'generic sensor', 
                  gs_interface = SensorModel.SensorInterface.virtual,
-                 gs_pull_interval = 5, 
                  gs_read_interval = 1):
 
         logger.log('GenericSensor started', 'debug')
@@ -82,7 +81,6 @@ class Nors_GenericSensor(object):
                                               gs_name, 
                                               gs_description, 
                                               gs_interface, 
-                                              gs_pull_interval, 
                                               gs_read_interval)
         
         logger.log(self.sensor_model.get_sensor_property('name') + ' UUID: ' + sensor_id)
@@ -163,12 +161,16 @@ class Nors_GenericSensor(object):
                 'temp' : '22.0'
         }
 
-        This method calls ReadSensor and SensorDataProcessing.
+        This method calls ReadSensor and SensorDataProcessing using read_interval as a timer. 
         Finally data is pushed to storage queue.  
         
         '''
         
         while True:
+            logger.log('#############################')
+            logger.log('Sensor Name : ' + str(self.sensor_model.get_sensor_property('name')) )
+            logger.log('Sleeping for: ' + str(self.sensor_model.get_sensor_property('read_interval')) )
+            logger.log('#############################')
             time.sleep(self.sensor_model.get_sensor_property('read_interval'))
             sensor_data = None
             

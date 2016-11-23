@@ -60,7 +60,7 @@ if __name__ == '__main__':
     
     # Load configuration parameters 
     config = load_configuration()
-    pull_sensors_interval = 5
+    pull_sensors_interval = config.ReadConfig('options', 'pull_sensors_interval')
     
     # Initialize local services
     local_storage = Nors_LocalStorage(config)

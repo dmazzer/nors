@@ -26,17 +26,16 @@ class Sensor():
     Sensor model where properties are organized inside a named tuple
     '''
      
-    def __init__(self, sensor_id, name, description, sensor_interface, pull_interval, read_interval):
+    def __init__(self, sensor_id, name, description, sensor_interface, read_interval):
         
         
         Model = namedtuple('Sensor',
-                            'name sensor_id description interface pull_interval  read_interval stream_info')
+                            'name sensor_id description interface read_interval stream_info')
         
         self.sensor = Model(name = name,
                             sensor_id = sensor_id,
                             description = description, 
                             interface = sensor_interface,
-                            pull_interval = pull_interval,
                             read_interval = read_interval,
                             stream_info = [])  
         

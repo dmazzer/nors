@@ -30,7 +30,7 @@ class Nors_SensorService:
         logger.log('SensorService started', 'info')
         
         self.q = Queue.Queue()
-        self.pull_sensors_interval = pull_sensors_interval
+        self.pull_sensors_interval = int(pull_sensors_interval)
         self.ipc_sensor_catalog = "ipc:///tmp/SensorCatalogService.pipe"
 
         self.SensorCatalog()

@@ -29,7 +29,6 @@ class Test_Sensor(unittest.TestCase):
         self.assertEqual(s1['description'], 'DESCRIPTION')
         self.assertEqual(s1['interface'], sensor.SensorInterface.analog)
         self.assertEqual(s1['stream_info'], [])
-        self.assertEqual(s1['pull_interval'], 2)
         self.assertEqual(s1['read_interval'], 1)
     
     def test_add_get_stream_info(self):
