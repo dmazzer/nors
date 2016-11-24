@@ -43,8 +43,9 @@ class Nors_GenericSensorStorage(object):
         self.stored_messages = 0;
     
     def put(self, sensor_data):
-        self.sensor_data_storage = sensor_data
-        self.stored_messages = 1
+        if sensor_data is not None:
+            self.sensor_data_storage = sensor_data
+            self.stored_messages = 1
     
     def get(self):
         if self.stored_messages != 0:
