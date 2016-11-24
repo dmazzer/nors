@@ -49,7 +49,9 @@ class Stream():
         return json.dumps(self.get_stream(), encoding='UTF-8', cls=EnumEncoder, indent=indentation)
     
     def getDateTime(self):
-        return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        #return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        return str(datetime.datetime.utcnow().isoformat()[:-3])
+    
     
     def get_property(self, property):
         return self.get_stream()[property]

@@ -26,6 +26,7 @@ logger = Logger('info')
 
 sys.path.append('../../')
 from models import sensor as SensorModel
+from models import sensor_service_model
 
 class Nors_GenericSensorStorage(object):
     '''
@@ -39,18 +40,24 @@ class Nors_GenericSensorStorage(object):
     
     def __init__(self):
         self.sensor_data_storage = {}
+        self.stored_messages = 0;
     
     def put(self, sensor_data):
         self.sensor_data_storage = sensor_data
+        self.stored_messages = 1
     
     def get(self):
-        return self.sensor_data_storage
+        if self.stored_messages != 0:
+            self.stored_messages = 0
+            return self.sensor_data_storage
+        else:
+            return None
 
 class Nors_GenericSensor(object):
     '''
     GenericSensor class, serve as a starting point to create a specific sensor reading class.
    
-    A real sensor reading application must implements SensorRead and SensorDataProcessing
+    A real sensor reading application must implement SensorRead and SensorDataProcessing
     '''
     
     def __init__(self, 
@@ -58,7 +65,6 @@ class Nors_GenericSensor(object):
                  gs_id = '', 
                  gs_description = 'generic sensor', 
                  gs_interface = SensorModel.SensorInterface.virtual,
-                 gs_pull_interval = 5, 
                  gs_read_interval = 1):
 
         logger.log('GenericSensor started', 'debug')
@@ -75,7 +81,6 @@ class Nors_GenericSensor(object):
                                               gs_name, 
                                               gs_description, 
                                               gs_interface, 
-                                              gs_pull_interval, 
                                               gs_read_interval)
         
         logger.log(self.sensor_model.get_sensor_property('name') + ' UUID: ' + sensor_id)
@@ -87,12 +92,24 @@ class Nors_GenericSensor(object):
         self.SignIn()
 
     def SensorDataProcessing(self, sensor_data):
+        ''' The return object must be a dictionary '''
         logger.log(self.sensor_model.get_sensor_property('name') + ': Default sensor data processing', 'debug')
         return sensor_data
     
     def SensorRead(self):
+        ''' The return object must be a dictionary or None '''
         logger.log(self.sensor_model.get_sensor_property('name') + ': Default sensor data read', 'debug')
-        return random.uniform(-1,1)
+        return { 'value': random.uniform(-1,1) }
+    
+    def ValidateSensorRead(self, sensor_data):
+        if sensor_data is None:
+            #raise ValueError('No data was readed from the sensor.')            
+            return None
+        if isinstance(sensor_data, dict):
+            return sensor_data
+        else:
+            raise ValueError('SensorRead must return data using a dictionary structure.')
+            return None
     
     def SignIn(self):
         '''
@@ -136,13 +153,36 @@ class Nors_GenericSensor(object):
     def SensorWork(self, q):
         '''
         SensorWork - Read a fisical sensor, call data processing and send data to storage
+        
+        A data structure is build containing sensor data and time stamp. Example:
+        { 'ts': 2016-08-07 19:17:07.779
+          'sensor_data': {
+                'hum' : '44.0',
+                'temp' : '22.0'
+        }
+
+        This method calls ReadSensor and SensorDataProcessing using read_interval as a timer. 
+        Finally data is pushed to storage queue.  
+        
         '''
         
         while True:
+            logger.log('#############################')
+            logger.log('Sensor Name : ' + str(self.sensor_model.get_sensor_property('name')) )
+            logger.log('Sleeping for: ' + str(self.sensor_model.get_sensor_property('read_interval')) )
+            logger.log('#############################')
             time.sleep(self.sensor_model.get_sensor_property('read_interval'))
-            sensor_data = self.SensorRead()
-            sensor_data_processed = self.SensorDataProcessing(sensor_data)
-            self.SensorDataStorage.put(sensor_data_processed)
+            sensor_data = None
+            
+            try:
+                sensor_data = self.ValidateSensorRead(self.SensorRead())
+            except ValueError as err:
+                logger.log(str(err), 'error')
+                
+            if sensor_data is not None:
+                sensor_data_processed = self.SensorDataProcessing(sensor_data)
+                sensor_information = {'ts': self.getDateTime(), 'sensor_data': sensor_data_processed }
+                self.SensorDataStorage.put(sensor_information)
             
     def SensorPullWork(self, q):
         '''
@@ -160,14 +200,24 @@ class Nors_GenericSensor(object):
         while True:
             msg = socket.recv_json()
             if msg['query'] == 'sensor_data':
-                sensor_data = {'sensor_data': self.SensorDataStorage.get()}
+                sensor_data = self.SensorDataStorage.get()
+#                 if sensor_data is not None:
                 socket.send_json(json.dumps(self.SensorDataInformation(sensor_data)))
-
+#                 else:
+#                     socket.send_json(json.dumps({}))
+                    # TODO: The class does not respond to the sensorservice if there is no data
+                    # to send. This must be improved with a better communication between services.
+                    
     def SensorDataInformation(self, sensor_data):
-        sensor_data['date'] = self.getDateTime()
-        sensor_data['sensor_id'] = self.sensor_model.get_sensor_property('sensor_id')
-        return sensor_data 
+        #sensor_data['date'] = self.getDateTime()
+        if sensor_data is None:
+            return sensor_service_model.SensorServiceModel(message_status='no data', message=None).get()
+        else:
+            sensor_data['sensor_id'] = self.sensor_model.get_sensor_property('sensor_id')
+            return sensor_service_model.SensorServiceModel(message_status='valid', message=sensor_data).get()
+#         return sensor_data 
 
     def getDateTime(self):
-        return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+#        return str(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        return str(datetime.datetime.utcnow().isoformat()[:-3])
     

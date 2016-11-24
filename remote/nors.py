@@ -21,6 +21,9 @@ from norsutils.logmsgs.logger import Logger
 from sensors import sensor_dht
 from sensors import sensor_bmp180
 from sensors import sensor_dummy
+from sensors.nors_energymeter import sensor_energymeter  
+
+
 
 import signal
 from uuid import uuid1
@@ -57,10 +60,11 @@ if __name__ == '__main__':
     
     # Load configuration parameters 
     config = load_configuration()
+    pull_sensors_interval = config.ReadConfig('options', 'pull_sensors_interval')
     
     # Initialize local services
     local_storage = Nors_LocalStorage(config)
-    sensor_service = Nors_SensorService(5, local_storage)
+    sensor_service = Nors_SensorService(pull_sensors_interval, local_storage)
     client_service = Nors_Client(config, local_storage)
     
 #     sensor_generic1 = Nors_GenericSensor(gs_name='fake1', gs_pull_interval=2, gs_read_fisical_interval=1)
@@ -72,6 +76,7 @@ if __name__ == '__main__':
     sensor_dummy = sensor_dummy.RealSensor()
     sensor_dht = sensor_dht.RealSensor()
     sensor_bmp180 = sensor_bmp180.RealSensor()
+    sensor_energymeter = sensor_energymeter.RealSensor()
 
     # Hold forever
     def do_exit(sig, stack):

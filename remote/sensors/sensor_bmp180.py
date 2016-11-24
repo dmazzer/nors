@@ -17,7 +17,6 @@ __email__ = "dmazzer@gmail.com"
 import sys
 import signal
 
-# sys.path.append('../')
 from genericsensor.genericsensor import Nors_GenericSensor
 
 sys.path.append('../../GrovePi/Software/Python/grove_barometer_sensors/barometric_sensor_bmp180/')
@@ -26,6 +25,10 @@ import smbus
 import RPi.GPIO as GPIO
 from grove_i2c_barometic_sensor_BMP180 import BMP085
 
+from norsutils.logmsgs.logger import Logger
+
+logger = Logger('debug')
+logger.log("SENSOR - BMP180 Barometer sensor", 'info')
 
 class RealSensor(Nors_GenericSensor):
     def __init__(self):
@@ -51,16 +54,15 @@ class RealSensor(Nors_GenericSensor):
                                          gs_id = '51c8f22a-e191-11e5-914d-001dbaefa596',
                                          gs_description = 'BMP180 Barometer sensor', 
                                          gs_interface = None,
-                                         gs_pull_interval = 5, 
-                                         gs_read_interval = 4)
+                                         gs_read_interval = 17)
         
 
     def SensorRead(self):
         try:
-            temp = str(self.bmp.readTemperature())
+            temp = self.bmp.readTemperature()
             
             # Read the current barometric pressure level
-            pressure = str(self.bmp.readPressure() / 100.0)
+            pressure = self.bmp.readPressure() / 100.0
             
             # To calculate altitude based on an estimated mean sea level pressure
             # (1013.25 hPa) call the function as follows, but this won't be very accurate
@@ -69,8 +71,8 @@ class RealSensor(Nors_GenericSensor):
             # To specify a more accurate altitude, enter the correct mean sea level
             # pressure level.  For example, if the current pressure level is 1023.50 hPa
             # enter 102350 since we include two decimal places in the integer value
-            altitude = str(self.bmp.readAltitude(99191))
-            logger.log( "Temp = " + temp + "  Press = " + pressure + " hPa" + "  Alt = " + altitude, 'debug')     
+            altitude = self.bmp.readAltitude(99191)
+            logger.log( "Temp = " + str(temp) + "  Press = " + str(pressure) + " hPa" + "  Alt = " + str(altitude), 'debug')     
             return {'temp': temp, 'press': pressure, 'alt': altitude}
         except (IOError,TypeError) as e:
             logger.log("Error reading sensor " + self.sensor_name, 'error')
@@ -78,11 +80,6 @@ class RealSensor(Nors_GenericSensor):
     def SensorDataProcessing(self,sensor_data):
         return sensor_data
         
-
-from norsutils.logmsgs.logger import Logger
-
-logger = Logger('debug')
-logger.log("SENSOR - BMP180 Barometer sensor", 'info')
 
 if __name__ == '__main__':
     sensor = RealSensor()

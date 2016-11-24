@@ -17,10 +17,6 @@ __email__ = "dmazzer@gmail.com"
 import sys
 import signal
 
-# sys.path.append('./genericsensor/')
-# sys.path.append('./norsutils/')
-# sys.path.append('../../')
-
 from genericsensor.genericsensor import Nors_GenericSensor
 
 from grovepi import *
@@ -40,20 +36,20 @@ class RealSensor(Nors_GenericSensor):
                                          gs_id = '1e693dee-e0b6-11e5-8f44-001dbaefa596',
                                          gs_description = 'DHT Humidity and Temperature', 
                                          gs_interface = None,
-                                         gs_pull_interval = 5, 
-                                         gs_read_interval = 4)
+                                         gs_read_interval = 16)
 
     def SensorRead(self):
-        dht_sensor_port = 2        # GrovePI port
+        dht_sensor_port = 8        # GrovePI port
     
         try:
             [ temp,hum ] = dht(dht_sensor_port,0)        #Get the temperature and Humidity from the DHT sensor
-            t = str(temp)
-            h = str(hum)
-            logger.log( "Temp = " + t + "  Humidity = " + h + "%", 'debug')     
+            t = temp
+            h = hum
+            logger.log( "Temp = " + str(t) + "  Humidity = " + str(h) + "%", 'debug')     
             return {'temp': t, 'hum': h}
         except (IOError,TypeError) as e:
             logger.log("Error reading sensor " + self.sensor_name, 'error')
+            return None
 
     def SensorDataProcessing(self,sensor_data):
         return sensor_data

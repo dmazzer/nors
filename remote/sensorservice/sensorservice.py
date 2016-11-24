@@ -30,7 +30,7 @@ class Nors_SensorService:
         logger.log('SensorService started', 'info')
         
         self.q = Queue.Queue()
-        self.pull_sensors_interval = pull_sensors_interval
+        self.pull_sensors_interval = int(pull_sensors_interval)
         self.ipc_sensor_catalog = "ipc:///tmp/SensorCatalogService.pipe"
 
         self.SensorCatalog()
@@ -51,6 +51,13 @@ class Nors_SensorService:
         t_catalog.daemon = True
         t_catalog.start()
         
+    def check_sensor_service_message(self, message):
+        if ('status' in message) and ('message' in message):
+            if message['status'] == 'valid':
+                return True
+            
+        return False
+         
     def SensorPullingWork(self, q):
         '''
         SensorPullingWork - Consult sensorservice to get sensor data
@@ -84,23 +91,24 @@ class Nors_SensorService:
 #                 logger.log('Sensor data requested.')
 
                 if poller.poll(15*1000): # 15s timeout in milliseconds
-                    sensor_data = socket.recv_json()
-                    logger.log(sensor['name'] + ': ' + str(sensor_data))
-                    logger.log('-----')
-                    
-                    try:
-                        self.LocalStorage.store(json.loads(sensor_data))
-                    except Exception, e:
-                        logger.log('There is a problem to save the sensor value to database.')
-                        logger.log('Maybe a wrong or malformed JSON string...')
-                        print e.value
-                        raise SystemExit
-                    
-                    
-                    
+                    sensor_service_message = json.loads(socket.recv_json())
+                    if self.check_sensor_service_message(sensor_service_message) is True:
+#                         sensor_data = socket.recv_json()
+                        sensor_data = sensor_service_message['message']
+                        logger.log(sensor['name'] + ': ' + str(sensor_data), 'debug')
+                        try:
+                            self.LocalStorage.store(sensor_data)
+                        except Exception, e:
+                            logger.log('There is a problem to save the sensor value to database.', 'error')
+                            logger.log('Maybe a wrong or malformed JSON string...', 'error')
+                            print str(e)
+                            raise SystemExit
+                    else:
+                        logger.log('No sensor data', 'debug')
                 else:
                     logger.log('Timeout sensor data request ' + sensor['name'] + ' ' + sensor['sensor_id'])
-                #time.sleep(0.1) # delay between sensor_read, not really needed
+                    # TODO: After some timeouts, the problematic sensor must be deregistered
+                
 
             time.sleep(self.pull_sensors_interval)
         
@@ -131,7 +139,6 @@ class Nors_SensorService:
             return False
         else:
             logger.log('Registering ' + sensor_name + ' - '  + sensor_id)
-#             sensor_append = {'name': sensor_name, 'sensor_id': sensor_id} 
             self.sensor_catalog_list.append(message)
             return True
 
