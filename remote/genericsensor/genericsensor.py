@@ -168,10 +168,10 @@ class Nors_GenericSensor(object):
         '''
         
         while True:
-            logger.log('#############################')
-            logger.log('Sensor Name : ' + str(self.sensor_model.get_sensor_property('name')) )
-            logger.log('Sleeping for: ' + str(self.sensor_model.get_sensor_property('read_interval')) )
-            logger.log('#############################')
+            logger.log('#############################', 'debug')
+            logger.log('Sensor Name : ' + str(self.sensor_model.get_sensor_property('name')) , 'debug')
+            logger.log('Sleeping for: ' + str(self.sensor_model.get_sensor_property('read_interval')) , 'debug')
+            logger.log('#############################', 'debug')
             time.sleep(self.sensor_model.get_sensor_property('read_interval'))
             sensor_data = None
             

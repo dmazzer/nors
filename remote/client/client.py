@@ -119,10 +119,10 @@ class Nors_Client():
                 connection_failed = True
                 logger.log('Post data to server failed', 'error')
                 
-                # check if the failure reason is an expired token 
-                if rv == 401:
-                    print (r)
-                    print (rv)
+#             check if the failure reason is an expired token 
+#             if rv == 401:
+#                 print (r)
+#                 print (rv)
             
             data_to_send = self.local_storage.get_first()
             
