@@ -54,7 +54,7 @@ class RealSensor(Nors_GenericSensor):
                                          gs_id = '51c8f22a-e191-11e5-914d-001dbaefa596',
                                          gs_description = 'BMP180 Barometer sensor', 
                                          gs_interface = None,
-                                         gs_read_interval = 17)
+                                         gs_read_interval = 60)
         
 
     def SensorRead(self):

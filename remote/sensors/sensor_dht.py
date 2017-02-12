@@ -36,7 +36,7 @@ class RealSensor(Nors_GenericSensor):
                                          gs_id = '1e693dee-e0b6-11e5-8f44-001dbaefa596',
                                          gs_description = 'DHT Humidity and Temperature', 
                                          gs_interface = None,
-                                         gs_read_interval = 16)
+                                         gs_read_interval = 60)
 
     def SensorRead(self):
         dht_sensor_port = 8        # GrovePI port

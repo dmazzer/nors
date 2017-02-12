@@ -1,9 +1,8 @@
 #!/usr/bin/env python2
 
 """ 
-sensor_dummy.py: Dummy (fake) sensor driver
+sensor_lm35.py: LM35 temperature sensor driver
 
-This sensor may be used for testing and as a prototype for a new driver development
 """
 
 __author__ = "Daniel Mazzer"
@@ -27,21 +26,23 @@ from grovepi import *
 
 from norsutils.logmsgs.logger import Logger
 
+from nors_
+
 logger = Logger('debug')
-logger.log("SENSOR - Dummy (fake) sensor", 'info')
+logger.log("SENSOR - Transmitter temp sensor", 'info')
 
 class RealSensor(Nors_GenericSensor):
     def __init__(self):
 
         self.meanvalue = 0
-        self.sensor_name = 'DUMMY'
+        self.sensor_name = 'LM35-TX'
         
         super(RealSensor, self).__init__(
                                          gs_name = self.sensor_name,
-                                         gs_id = '48897fe8-4917-11e6-b789-b827ebc6c8e4',
-                                         gs_description = 'Dummy (fake) sensor', 
+                                         gs_id = '2e845abe-aa9c-11e6-8ff3-080027bc22fd',
+                                         gs_description = 'Transmitter temp sensor', 
                                          gs_interface = None,
-                                         gs_read_interval = 60)
+                                         gs_read_interval = 14)
 
         
     def SensorRead(self):

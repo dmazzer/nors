@@ -43,8 +43,9 @@ class Nors_GenericSensorStorage(object):
         self.stored_messages = 0;
     
     def put(self, sensor_data):
-        self.sensor_data_storage = sensor_data
-        self.stored_messages = 1
+        if sensor_data is not None:
+            self.sensor_data_storage = sensor_data
+            self.stored_messages = 1
     
     def get(self):
         if self.stored_messages != 0:
@@ -167,10 +168,10 @@ class Nors_GenericSensor(object):
         '''
         
         while True:
-            logger.log('#############################')
-            logger.log('Sensor Name : ' + str(self.sensor_model.get_sensor_property('name')) )
-            logger.log('Sleeping for: ' + str(self.sensor_model.get_sensor_property('read_interval')) )
-            logger.log('#############################')
+            logger.log('#############################', 'debug')
+            logger.log('Sensor Name : ' + str(self.sensor_model.get_sensor_property('name')) , 'debug')
+            logger.log('Sleeping for: ' + str(self.sensor_model.get_sensor_property('read_interval')) , 'debug')
+            logger.log('#############################', 'debug')
             time.sleep(self.sensor_model.get_sensor_property('read_interval'))
             sensor_data = None
             
