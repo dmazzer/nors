@@ -1,0 +1,9 @@
+Short-Description: NORS
+Description: init script for nors-remote application.
+Exec: /home/mazzer/nors/remote/nors.py -c /home/mazzer/nors/remote/nors.conf
+Required-Start: $syslog $time
+Required-Stop: $syslog $time
+Prestart-Hook: echo "This is the Prestart-Hook";
+ echo "It outputs two lines.";
+Poststop-Hook: echo "This is the Poststop-Hook";
+ echo "All it does, is print this.";
