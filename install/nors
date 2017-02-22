@@ -11,7 +11,7 @@
 ### BEGIN INIT INFO
 # Provides:          nors
 # Default-Start:     2 3 4 5
-# Default-Stop:      1
+# Default-Stop:      0 1 6
 # Short-Description: NORS
 # Required-Start:   $syslog $time
 # Required-Stop:     $syslog $time
@@ -26,13 +26,13 @@ PYTHON_PATH=$DIR/remote/:$DIR/models/:$DIR/server:$DIR:$DIR/remote/GrovePi/Softw
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC=NORS
-NAME=nors
+DESC="NORS Remote"
+NAME=norsx
 PREPARE_ENV=$DIR/install/env_python_path.sh
 DAEMON=$DIR/remote/nors.py
 DAEMON_USER=root
-BASENAME=nors.sh
-DAEMON_ARGS=" -c /home/mazzer/nors/remote/nors.conf"
+BASENAME=nors
+DAEMON_ARGS="-c $DIR/remote/nors.conf"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 # Exit if the package is not installed
@@ -50,13 +50,11 @@ SCRIPTNAME=/etc/init.d/$NAME
 #
 do_start()
 {
-	echo "This is the Prestart-Hook";
-	echo "It outputs two lines.";
 #	start-stop-daemon --start --oknodo --background --quiet --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- \
 #	$PREPARE_ENV
 	cd $DIR/remote
 	export PYTHONPATH=$PYTHON_PATH
-	start-stop-daemon --start --oknodo --make-pidfile --pidfile $PIDFILE --user $DAEMON_USER --chuid $DAEMON_USER --exec $DAEMON -- $DAEMON_ARGS 
+	start-stop-daemon --start --background --verbose --make-pidfile --pidfile $PIDFILE --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON -- $DAEMON_ARGS 
 	log_end_msg $?
 }
 
@@ -65,15 +63,12 @@ do_start()
 #
 do_stop()
 {
-	start-stop-daemon --stop --oknodo --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $BASENAME
+	start-stop-daemon --stop --oknodo --quiet --retry 10 --pidfile $PIDFILE --name $BASENAME
 	RETVAL="$?"
 
 	rm -f $PIDFILE
 
 	return $RETVAL
-	echo "This is the Poststop-Hook";
-	echo "All it does, is print this.";
-	return "$RETVAL"
 }
 
 #
@@ -86,14 +81,16 @@ do_reload() {
 
 case "$1" in
   start)
-	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+	log_daemon_msg "Starting $DESC" "$NAME"
 	do_start
-    log_end_msg $?
+	log_daemon_msg $?
+	log_daemon_msg "Starting process done"
+    	log_end_msg $?
 	;;
   stop)
-	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+	log_daemon_msg "Stopping $DESC" "$NAME"
 	do_stop
-    log_end_msg $?
+    	log_end_msg $?
 	;;
   #reload|force-reload)
 	#
@@ -114,7 +111,7 @@ case "$1" in
 	case "$?" in
 	  0)
 		do_start
-        log_end_msg "$?"
+        	log_end_msg "$?"
 		;;
 	  *)
 	  	# Failed to stop
@@ -125,6 +122,7 @@ case "$1" in
   *)
 	#echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
 	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
-	exit 3
+	exit 1
 	;;
 esac
+exit 0
