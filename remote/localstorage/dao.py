@@ -17,10 +17,33 @@ sys.path.append('../')
 from norsutils.logmsgs.logger import Logger
 
 from pymongo import MongoClient
+from pymongo.errors import AutoReconnect
 import pymongo
 from bson.objectid import ObjectId
 
 logger = Logger()
+
+def autoreconnect_retry(retries=3):
+
+    """
+    Decorator for connection retrial in mongoDB
+    """
+    
+    def autoreconnect_retry_decorator(fn):
+        def db_op_wrapper(*args, **kwargs):
+            tries = 0
+    
+            while tries < retries:
+                try:
+                    return fn(*args, **kwargs)
+    
+                except AutoReconnect:
+                    tries += 1
+    
+                raise Exception("No luck even after %d retries" % retries)
+    
+        return db_op_wrapper
+    return autoreconnect_retry_decorator
 
 class Nors_LocalStorage_DAO:
     def __init__(self, db='nors_local_storage', db_address='mongodb://localhost:27017/'):
